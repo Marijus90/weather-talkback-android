@@ -44,6 +44,14 @@ public final class WeatherItem {
     @ColumnInfo(name = "windDirection")
     public Double mWindBearing;
 
+    @Nullable
+    @ColumnInfo(name = "timeWhenCreated")
+    public String mTimeOfDayCreated;
+
+    @Nullable
+    @ColumnInfo(name = "dateWhenCreated")
+    public String mDateCreated;
+
     public WeatherItem() {
 
     }
@@ -53,14 +61,11 @@ public final class WeatherItem {
      */
     @Ignore
     public WeatherItem(@Nullable String mSummary, @Nullable Icon mIcon, @Nullable Double mTemperature,
-                       @Nullable Double mWindSpeed, @Nullable Double mWindBearing) {
-        this(mSummary, mIcon, UUID.randomUUID().toString(), mTemperature, mWindSpeed, mWindBearing);
+                       @Nullable Double mWindSpeed, @Nullable Double mWindBearing, @Nullable String timeCreated, @Nullable String dateCreated) {
+        this(mSummary, mIcon, UUID.randomUUID().toString(), mTemperature, mWindSpeed, mWindBearing, timeCreated, dateCreated);
     }
 
-    //TODO: Update the comment
     /**
-     * Use this constructor to .
-     *
      * @param condition     summary of the weather (ex. cloudy, windy etc.)
      * @param icon          icon of the weather corresponding to condition
      * @param temperature   temperature
@@ -69,13 +74,15 @@ public final class WeatherItem {
      */
     @Ignore
     public WeatherItem(@Nullable String condition, @Nullable Icon icon, @NonNull String id,
-                       @Nullable Double temperature, @Nullable Double windSpeed, @Nullable Double windDirection) {
+                       @Nullable Double temperature, @Nullable Double windSpeed, @Nullable Double windDirection, @Nullable String timeCreated, @Nullable String dateCreated) {
         mId = id;
         mSummary = condition;
         mIcon = icon.getText();
         mTemperature = temperature;
         mWindSpeed = windSpeed;
         mWindBearing = windDirection;
+        mTimeOfDayCreated = timeCreated;
+        mDateCreated = dateCreated;
     }
 
     @NonNull
@@ -108,6 +115,16 @@ public final class WeatherItem {
         return mWindBearing;
     }
 
+    @Nullable
+    public String getmTimeOfDayCreated() {
+        return mTimeOfDayCreated;
+    }
+
+    @Nullable
+    public String getmDateCreated() {
+        return mDateCreated;
+    }
+
     public void setmId(@NonNull String mId) {
         this.mId = mId;
     }
@@ -130,6 +147,14 @@ public final class WeatherItem {
 
     public void setmWindBearing(@Nullable Double mWindBearing) {
         this.mWindBearing = mWindBearing;
+    }
+
+    public void setmTimeOfDayCreated(@Nullable String mTimeOfDayCreated) {
+        this.mTimeOfDayCreated = mTimeOfDayCreated;
+    }
+
+    public void setmDateCreated(@Nullable String mDateCreated) {
+        this.mDateCreated = mDateCreated;
     }
 
     @Override

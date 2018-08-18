@@ -46,7 +46,6 @@ public class WeatherItemLocalSource implements WeatherDataSource {
                     @Override
                     public void run() {
                         if (item == null || item.isEmpty()) {
-                            //TODO: Best PLACE TO CHECK IF DATA IS EXPIRED IS HERE
                             callback.onDataNotAvailable();
                         } else {
                             callback.onDataLoaded(item);
@@ -78,11 +77,6 @@ public class WeatherItemLocalSource implements WeatherDataSource {
             }
         };
         appExecutors.diskIO().execute(deleteRunnable);
-    }
-
-    @Override
-    public void refreshCachedData() {
-
     }
 
     @VisibleForTesting

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Weather Talkback 2</string>
+    <string name="updated">Updated: %s</string>
 </resources>

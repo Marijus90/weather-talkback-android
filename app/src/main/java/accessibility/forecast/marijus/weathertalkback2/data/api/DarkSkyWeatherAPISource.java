@@ -10,6 +10,7 @@ import android.zetterstrom.com.forecast.models.Unit;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
+import accessibility.forecast.marijus.weathertalkback2.helper.DeviceStateUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,8 +47,11 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
                         if (response.isSuccessful()) {
                             //TODO: Use adapter pattern ?
                             DataPoint responseItem = response.body().getCurrently();
-                            callback.onDataLoaded(new WeatherItem(responseItem.getSummary(), responseItem.getIcon(),
-                                    responseItem.getTemperature(), responseItem.getWindSpeed(), responseItem.getWindBearing()));
+                            callback.onDataLoaded(new WeatherItem(responseItem.getSummary(),
+                                    responseItem.getIcon(), responseItem.getTemperature(),
+                                    responseItem.getWindSpeed(), responseItem.getWindBearing(),
+                                    DeviceStateUtils.getCurrentTimeAsString(),
+                                    DeviceStateUtils.getCurrentDateAsString()));
                         } else {
                             callback.onDataNotAvailable();
                         }
@@ -90,11 +94,6 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
     @Override
     public void clearCachedData() {
-
-    }
-
-    @Override
-    public void refreshCachedData() {
 
     }
 }

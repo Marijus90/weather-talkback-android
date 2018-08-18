@@ -23,6 +23,4 @@ public interface WeatherDataSource {
 
     void clearCachedData();
 
-    void refreshCachedData();
-
 }

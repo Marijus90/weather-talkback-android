@@ -3,6 +3,8 @@ package accessibility.forecast.marijus.weathertalkback2.data;
 import android.support.annotation.NonNull;
 import android.zetterstrom.com.forecast.models.Forecast;
 
+import accessibility.forecast.marijus.weathertalkback2.helper.DeviceStateUtils;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WeatherItemsRepository implements WeatherDataSource {
@@ -13,9 +15,6 @@ public class WeatherItemsRepository implements WeatherDataSource {
     private final WeatherDataSource localDataSource;
 
     Forecast cachedForecast;
-
-    //TODO: Set time of expiry to refresh cache after 24hrs
-    boolean isCacheInvalid = false;
 
     // Prevent direct instantiation
     private WeatherItemsRepository(@NonNull WeatherDataSource remoteDataSource,
@@ -65,10 +64,11 @@ public class WeatherItemsRepository implements WeatherDataSource {
 
             @Override
             public void onDataNotAvailable() {
-                // If client is offline - were we call cache (local repo)
+                // If client is offline - we are getting data from cache (local repo)
                 if (!isForced) {
                     getDataFromLocalDataSource(callback);
                 } else {
+                    //TODO: Here I should show a toast or msg in UI: "Connect to the Internet in order to get updated data."
                     callback.onDataNotAvailable();
                 }
 
@@ -82,8 +82,15 @@ public class WeatherItemsRepository implements WeatherDataSource {
 
             @Override
             public void onDataLoaded(WeatherItem data) {
-                //TODO: Check if data came from cache = true
-                callback.onDataLoaded(data);
+                if (isCacheValid(data.getmDateCreated())) {
+                    callback.onDataLoaded(data);
+                } else {
+                    callback.onDataNotAvailable();
+                }
+            }
+
+            private boolean isCacheValid(String dateCreated) {
+                return !DeviceStateUtils.isOlderThanOneDay(dateCreated);
             }
 
             @Override
@@ -98,10 +105,6 @@ public class WeatherItemsRepository implements WeatherDataSource {
         cachedForecast = null; //TODO: Did I forget to implement this?
         //        remoteDataSource.clear();
         //        localDataSource.clear();
-    }
-
-    @Override
-    public void refreshCachedData() {
     }
 
 }

@@ -52,6 +52,7 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
         holder.windDirection.setText(ItemDataStringUtils.getWindDirectionDescription(currentItem.getmWindBearing()));
         holder.icon.setImageResource(context.getResources().getIdentifier(ItemDataStringUtils.getFormattedIconName(currentItem.getmIcon()),
                 "drawable", context.getPackageName()));
+        holder.updateTime.setText(context.getString(R.string.updated, currentItem.getmTimeOfDayCreated()));
 
         //TODO: Show when item was updated
         // set source to display cached or not
@@ -100,7 +101,7 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
             windSpeed = view.findViewById(R.id.tv_wind_speed_value);
             windDirection = view.findViewById(R.id.tv_wind_direction_value);
             icon = view.findViewById(R.id.iv_weather_icon);
-            updateTime = view.findViewById(R.id.tv_source);
+            updateTime = view.findViewById(R.id.tv_time_updated);
         }
     }
 }

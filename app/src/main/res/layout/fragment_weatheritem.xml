@@ -84,13 +84,13 @@
         app:layout_constraintLeft_toLeftOf="@id/tv_wind_speed_value"
         tools:text="North East" />
 
-    <!-- TODO: Remove before pushing to prod -->
     <TextView
-        android:id="@+id/tv_source"
+        android:id="@+id/tv_time_updated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/grey"
+        android:layout_marginTop="2dp"
         app:layout_constraintTop_toBottomOf="@id/tv_wind_direction_value"
         app:layout_constraintLeft_toLeftOf="@id/tv_wind_direction_title"
         tools:text="Updated: 1 min ago" />
