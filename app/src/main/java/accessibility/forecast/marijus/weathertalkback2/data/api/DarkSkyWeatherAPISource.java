@@ -34,7 +34,7 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
     }
 
     @Override
-    public void getWeatherData(final @NonNull GetWeatherDataCallback callback) {
+    public void getWeatherData(final @NonNull GetWeatherDataCallback callback, boolean isForced) {
         if (configuration == null) {
             configureForecastClient();
         }
@@ -67,7 +67,7 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
                 new ForecastConfiguration.Builder("637f66044420531db6fd59fd99c20771")
                         .setDefaultLanguage(Language.ENGLISH)
                         .setDefaultUnit(Unit.UK)
-//                        .setCacheDirectory(App.getContext().getCacheDir())
+                        .setConnectionTimeout(3)
                         .build();
         ForecastClient.create(configuration);
     }
@@ -82,6 +82,10 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
     @Override
     public void cacheData(WeatherItem data) {
 
+    }
+
+    @Override
+    public void refreshData() {
     }
 
     @Override

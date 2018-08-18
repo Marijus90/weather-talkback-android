@@ -23,7 +23,7 @@ public class WeatherPresenter implements WeatherContract.Presenter {
     }
 
     @Override
-    public void refreshData() {
+    public void refreshData(boolean isForced) {
         view.setLoadingIndicator(true);
 
         weatherRepository.getWeatherData(new WeatherDataSource.GetWeatherDataCallback() {
@@ -43,7 +43,7 @@ public class WeatherPresenter implements WeatherContract.Presenter {
                 view.showNoDataLayout(true);
                 view.setLoadingIndicator(false);
             }
-        });
+        }, isForced);
     }
 
     private void processWeatherData(WeatherItem data) {
@@ -59,7 +59,7 @@ public class WeatherPresenter implements WeatherContract.Presenter {
 
     @Override
     public void start() {
-        refreshData();
+        refreshData(false);
     }
 
 }

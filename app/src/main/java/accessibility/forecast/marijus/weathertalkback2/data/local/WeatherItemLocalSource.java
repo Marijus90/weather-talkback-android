@@ -37,7 +37,7 @@ public class WeatherItemLocalSource implements WeatherDataSource {
     }
 
     @Override
-    public void getWeatherData(@NonNull final GetWeatherDataCallback callback) {
+    public void getWeatherData(@NonNull final GetWeatherDataCallback callback, boolean isForced) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -62,6 +62,11 @@ public class WeatherItemLocalSource implements WeatherDataSource {
     @Override
     public void cacheData(WeatherItem data) {
         weatherDAO.insertTask(data);
+    }
+
+    @Override
+    public void refreshData() {
+
     }
 
     @Override

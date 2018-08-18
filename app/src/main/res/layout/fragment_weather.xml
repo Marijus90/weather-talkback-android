@@ -42,7 +42,7 @@
         android:id="@+id/tv_please_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Please refresh"
+        android:text="Please refresh when you're online"
         android:textSize="20sp"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"

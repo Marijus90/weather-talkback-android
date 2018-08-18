@@ -3,8 +3,6 @@ package accessibility.forecast.marijus.weathertalkback2.data;
 import android.support.annotation.NonNull;
 import android.zetterstrom.com.forecast.models.Forecast;
 
-import accessibility.forecast.marijus.weathertalkback2.helper.DeviceStateUtils;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WeatherItemsRepository implements WeatherDataSource {
@@ -38,18 +36,9 @@ public class WeatherItemsRepository implements WeatherDataSource {
     }
 
     @Override
-    public void getWeatherData(@NonNull GetWeatherDataCallback callback) {
+    public void getWeatherData(@NonNull GetWeatherDataCallback callback, boolean isForced) {
         checkNotNull(callback);
-
-//        if (DeviceStateUtils.isDeviceOnline()) {
-            getDataFromRemoteDataSource(callback);
-//        } else {
-//            getDataFromRemoteDataSource(callback);
-//        }
-
-        //TODO: Reduce API timeout
-
-        //TODO: Implement on forced refresh
+        getDataFromRemoteDataSource(callback, isForced);
     }
 
     @Override
@@ -57,7 +46,11 @@ public class WeatherItemsRepository implements WeatherDataSource {
         localDataSource.cacheData(data);
     }
 
-    private void getDataFromRemoteDataSource(@NonNull final GetWeatherDataCallback callback) {
+    @Override
+    public void refreshData() {
+    }
+
+    private void getDataFromRemoteDataSource(@NonNull final GetWeatherDataCallback callback, final boolean isForced) {
         remoteDataSource.getWeatherData(new GetWeatherDataCallback() {
 
             @Override
@@ -72,11 +65,15 @@ public class WeatherItemsRepository implements WeatherDataSource {
 
             @Override
             public void onDataNotAvailable() {
-                //TODO: Here means you're offline - check cache
-                //TODO: To reach this takes 10s
-                getDataFromLocalDataSource(callback);
+                // If client is offline - were we call cache (local repo)
+                if (!isForced) {
+                    getDataFromLocalDataSource(callback);
+                } else {
+                    callback.onDataNotAvailable();
+                }
+
             }
-        });
+        }, isForced);
     }
 
 
@@ -93,7 +90,7 @@ public class WeatherItemsRepository implements WeatherDataSource {
             public void onDataNotAvailable() {
                 callback.onDataNotAvailable();
             }
-        });
+        }, false);
     }
 
     @Override
@@ -105,7 +102,6 @@ public class WeatherItemsRepository implements WeatherDataSource {
 
     @Override
     public void refreshCachedData() {
-        //TODO: Update DB if call is coming from API
     }
 
 }

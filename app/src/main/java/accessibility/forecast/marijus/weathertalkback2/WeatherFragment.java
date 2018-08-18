@@ -68,7 +68,7 @@ public class WeatherFragment extends Fragment implements WeatherContract.View {
             refreshBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.refreshData();
+                    presenter.refreshData(true);
                 }
             });
         }
@@ -152,4 +152,5 @@ public class WeatherFragment extends Fragment implements WeatherContract.View {
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(WeatherItem item);
     }
+
 }

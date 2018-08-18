@@ -15,9 +15,11 @@ public interface WeatherDataSource {
 
     }
 
-    void getWeatherData(@NonNull GetWeatherDataCallback callback);
+    void getWeatherData(@NonNull GetWeatherDataCallback callback, boolean isForced);
 
     void cacheData(WeatherItem data);
+
+    void refreshData();
 
     void clearCachedData();
 

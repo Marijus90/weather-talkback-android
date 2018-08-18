@@ -85,15 +85,15 @@
         tools:text="North East" />
 
     <!-- TODO: Remove before pushing to prod -->
-    <!-- TODO: Color text grey -->
     <TextView
         android:id="@+id/tv_source"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
+        android:textColor="@color/grey"
         app:layout_constraintTop_toBottomOf="@id/tv_wind_direction_value"
-        app:layout_constraintLeft_toLeftOf="@id/tv_wind_speed_value"
-        android:text="xxx" />
+        app:layout_constraintLeft_toLeftOf="@id/tv_wind_direction_title"
+        tools:text="Updated: 1 min ago" />
 
     <ImageView
         android:id="@+id/iv_weather_icon"

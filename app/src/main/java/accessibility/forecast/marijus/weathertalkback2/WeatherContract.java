@@ -28,7 +28,7 @@ public interface WeatherContract {
 
     interface Presenter extends BasePresenter {
 
-        void refreshData();
+        void refreshData(boolean isForced);
 
         void updateCachedData(WeatherItem forecast);
 
