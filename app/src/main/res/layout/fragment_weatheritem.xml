@@ -8,10 +8,7 @@
     android:background="@drawable/weather_item_background"
     android:elevation="4dp"
     android:orientation="horizontal"
-    android:paddingBottom="8dp"
-    android:paddingLeft="32dp"
-    android:paddingRight="8dp"
-    android:paddingTop="8dp">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/tv_condition_title"
@@ -27,21 +24,11 @@
         android:id="@+id/tv_condition_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="80dp"
+        android:layout_marginRight="30dp"
         android:textAppearance="?attr/textAppearanceListItem"
         app:layout_constraintLeft_toRightOf="@id/tv_condition_title"
-        app:layout_constraintRight_toRightOf="@id/weatherIcon"
+        app:layout_constraintRight_toRightOf="@id/iv_weather_icon"
         tools:text="Windy" />
-
-    <!-- TODO: Add weather icon -->
-    <ImageView
-        android:id="@+id/weatherIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="Image of a weather condition that day"
-        android:src="@drawable/ic_refresh"
-        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/tv_temperature_title"
@@ -56,7 +43,6 @@
         android:id="@+id/tv_temperature_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="80dp"
         android:textAppearance="?attr/textAppearanceListItem"
         app:layout_constraintBottom_toBottomOf="@id/tv_temperature_title"
         app:layout_constraintLeft_toLeftOf="@id/tv_condition_value"
@@ -75,7 +61,6 @@
         android:id="@+id/tv_wind_speed_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="80dp"
         android:textAppearance="?attr/textAppearanceListItem"
         app:layout_constraintBottom_toBottomOf="@id/tv_wind_speed_title"
         app:layout_constraintLeft_toLeftOf="@id/tv_temperature_value"
@@ -86,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
-        android:text="Temperature:"
+        android:text="Wind direction:"
         android:textAppearance="?attr/textAppearanceListItem"
         app:layout_constraintTop_toBottomOf="@id/tv_wind_speed_title" />
 
@@ -94,10 +79,28 @@
         android:id="@+id/tv_wind_direction_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="80dp"
         android:textAppearance="?attr/textAppearanceListItem"
         app:layout_constraintBottom_toBottomOf="@id/tv_wind_direction_title"
         app:layout_constraintLeft_toLeftOf="@id/tv_wind_speed_value"
         tools:text="North East" />
+
+    <!-- TODO: Remove before pushing to prod -->
+    <!-- TODO: Color text grey -->
+    <TextView
+        android:id="@+id/tv_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceListItem"
+        app:layout_constraintTop_toBottomOf="@id/tv_wind_direction_value"
+        app:layout_constraintLeft_toLeftOf="@id/tv_wind_speed_value"
+        android:text="xxx" />
+
+    <ImageView
+        android:id="@+id/iv_weather_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="Image of a weather condition that day"
+        android:src="@drawable/ic_refresh"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

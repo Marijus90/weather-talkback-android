@@ -3,14 +3,16 @@ package accessibility.forecast.marijus.weathertalkback2.data;
 import android.support.annotation.NonNull;
 import android.zetterstrom.com.forecast.models.Forecast;
 
+import accessibility.forecast.marijus.weathertalkback2.helper.DeviceStateUtils;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WeatherItemsRepository implements WeatherDataSource {
+
     private static WeatherItemsRepository INSTANCE = null;
 
     private final WeatherDataSource remoteDataSource;
-    //TODO: Add local DB (data source)
-//    private final WeatherDataSource localDataSource;
+    private final WeatherDataSource localDataSource;
 
     Forecast cachedForecast;
 
@@ -21,7 +23,7 @@ public class WeatherItemsRepository implements WeatherDataSource {
     private WeatherItemsRepository(@NonNull WeatherDataSource remoteDataSource,
                                    @NonNull WeatherDataSource localDataSource) {
         this.remoteDataSource = checkNotNull(remoteDataSource);
-//        this.localDataSource = checkNotNull(localDataSource);
+        this.localDataSource = checkNotNull(localDataSource);
     }
 
     public static WeatherItemsRepository getInstance(WeatherDataSource remoteDataSource, WeatherDataSource localDataSource) {
@@ -36,26 +38,55 @@ public class WeatherItemsRepository implements WeatherDataSource {
     }
 
     @Override
-    public void getWeatherData(@NonNull GetAPIDataCallback callback) {
-        //TODO: Get cached values
+    public void getWeatherData(@NonNull GetWeatherDataCallback callback) {
+        checkNotNull(callback);
 
-        //TODO: Get values from local DB
+//        if (DeviceStateUtils.isDeviceOnline()) {
+            getDataFromRemoteDataSource(callback);
+//        } else {
+//            getDataFromRemoteDataSource(callback);
+//        }
 
-        // Getting data from API
-        getDataFromRemoteDataSource(callback);
+        //TODO: Reduce API timeout
+
+        //TODO: Implement on forced refresh
     }
 
-    private void getDataFromRemoteDataSource(@NonNull final GetAPIDataCallback callback) {
-        remoteDataSource.getWeatherData(new GetAPIDataCallback() {
+    @Override
+    public void cacheData(WeatherItem data) {
+        localDataSource.cacheData(data);
+    }
+
+    private void getDataFromRemoteDataSource(@NonNull final GetWeatherDataCallback callback) {
+        remoteDataSource.getWeatherData(new GetWeatherDataCallback() {
 
             @Override
-            public void onDataLoaded(Forecast forecastData) {
-                //TODO: Refresh data in cache
-//                refreshCache(forecastData);
-                //TODO: Refresh data in DB
-//                refreshLocalDataSource(forecastData);
+            public void onDataLoaded(WeatherItem data) {
+                if (!data.isEmpty()) {
+                    cacheData(data);
+                    callback.onDataLoaded(data);
+                } else {
+                    callback.onDataNotAvailable();
+                }
+            }
 
-                callback.onDataLoaded(forecastData);
+            @Override
+            public void onDataNotAvailable() {
+                //TODO: Here means you're offline - check cache
+                //TODO: To reach this takes 10s
+                getDataFromLocalDataSource(callback);
+            }
+        });
+    }
+
+
+    private void getDataFromLocalDataSource(@NonNull final GetWeatherDataCallback callback) {
+        localDataSource.getWeatherData(new GetWeatherDataCallback() {
+
+            @Override
+            public void onDataLoaded(WeatherItem data) {
+                //TODO: Check if data came from cache = true
+                callback.onDataLoaded(data);
             }
 
             @Override
@@ -66,25 +97,15 @@ public class WeatherItemsRepository implements WeatherDataSource {
     }
 
     @Override
-    public void cacheData() {
-
-    }
-
-    @Override
     public void clearCachedData() {
-
-    }
-
-    @Override
-    public void clearAllData() {
-//        remoteDataSource.clear();
-//        localDataSource.clear();
-
-        cachedForecast = null;
+        cachedForecast = null; //TODO: Did I forget to implement this?
+        //        remoteDataSource.clear();
+        //        localDataSource.clear();
     }
 
     @Override
     public void refreshCachedData() {
-
+        //TODO: Update DB if call is coming from API
     }
+
 }
