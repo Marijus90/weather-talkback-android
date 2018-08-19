@@ -60,8 +60,8 @@ public class WeatherItemLocalSource implements WeatherDataSource {
 
     @Override
     public void cacheData(WeatherItem data) {
-        weatherDAO.deleteTasks();
-        weatherDAO.insertTask(data);
+        weatherDAO.deleteWeatherItems();
+        weatherDAO.insertWeatherItem(data);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class WeatherItemLocalSource implements WeatherDataSource {
         Runnable deleteRunnable = new Runnable() {
             @Override
             public void run() {
-                weatherDAO.deleteTasks();
+                weatherDAO.deleteWeatherItems();
             }
         };
         appExecutors.diskIO().execute(deleteRunnable);

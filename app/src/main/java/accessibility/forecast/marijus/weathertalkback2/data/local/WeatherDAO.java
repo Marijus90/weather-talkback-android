@@ -28,12 +28,12 @@ public interface WeatherDAO {
      * @param item the weather item to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertTask(WeatherItem item);
+    void insertWeatherItem(WeatherItem item);
 
     /**
      * Delete all data in the db.
      */
     @Query("DELETE FROM items")
-    void deleteTasks();
+    void deleteWeatherItems();
 
 }

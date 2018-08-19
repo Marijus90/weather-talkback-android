@@ -57,7 +57,7 @@ public final class WeatherItem {
     }
 
     /**
-     * Use this constructor to create a new weather item.
+     * Using this constructor to create a new weather item.
      */
     @Ignore
     public WeatherItem(@Nullable String mSummary, @Nullable Icon mIcon, @Nullable Double mTemperature,
@@ -78,6 +78,21 @@ public final class WeatherItem {
         mId = id;
         mSummary = condition;
         mIcon = icon.getText();
+        mTemperature = temperature;
+        mWindSpeed = windSpeed;
+        mWindBearing = windDirection;
+        mTimeOfDayCreated = timeCreated;
+        mDateCreated = dateCreated;
+    }
+
+    /**
+     * Using this constructor for testing only.
+     */
+    @Ignore
+    public WeatherItem(String condition, String icon, double temperature, double windSpeed, double windDirection, String timeCreated, String dateCreated) {
+        mId = UUID.randomUUID().toString();
+        mSummary = condition;
+        mIcon = icon;
         mTemperature = temperature;
         mWindSpeed = windSpeed;
         mWindBearing = windDirection;
@@ -170,9 +185,14 @@ public final class WeatherItem {
                 Objects.equal(mWindBearing, item.mWindBearing);
     }
 
-    //TODO: Improve this implementation
     public boolean isEmpty() {
-        return Strings.isNullOrEmpty(mSummary);
+        return Strings.isNullOrEmpty(mSummary) &&
+                Strings.isNullOrEmpty(mIcon) &&
+                Strings.isNullOrEmpty(mDateCreated) &&
+                Strings.isNullOrEmpty(mTimeOfDayCreated) &&
+                mTemperature != null &&
+                mWindSpeed != null &&
+                mWindBearing != null;
     }
 
 }

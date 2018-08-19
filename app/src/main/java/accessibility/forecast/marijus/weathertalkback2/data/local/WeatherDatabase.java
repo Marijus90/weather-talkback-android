@@ -25,7 +25,7 @@ public abstract class WeatherDatabase extends RoomDatabase {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                         WeatherDatabase.class, "WeatherLocal.db")
-                        .allowMainThreadQueries() //TODO: Remove this and fix properly
+                        .allowMainThreadQueries() //TODO: Execute on a background thread
                         .build();
             }
             return INSTANCE;
