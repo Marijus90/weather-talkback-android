@@ -11,7 +11,7 @@ public interface WeatherDataSource {
 
         void onDataLoaded(WeatherItem data);
 
-        void onDataNotAvailable();
+        void onDataNotAvailable(String message);
 
     }
 

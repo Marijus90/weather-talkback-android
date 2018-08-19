@@ -53,13 +53,13 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
                                     DeviceStateUtils.getCurrentTimeAsString(),
                                     DeviceStateUtils.getCurrentDateAsString()));
                         } else {
-                            callback.onDataNotAvailable();
+                            callback.onDataNotAvailable(null);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Forecast> forecastCall, Throwable throwable) {
-                        callback.onDataNotAvailable();
+                        callback.onDataNotAvailable(null);
                     }
                 });
     }
@@ -71,7 +71,7 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
                 new ForecastConfiguration.Builder("637f66044420531db6fd59fd99c20771")
                         .setDefaultLanguage(Language.ENGLISH)
                         .setDefaultUnit(Unit.UK)
-                        .setConnectionTimeout(3)
+                        .setConnectionTimeout(4)
                         .build();
         ForecastClient.create(configuration);
     }

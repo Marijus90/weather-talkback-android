@@ -46,7 +46,7 @@ public class WeatherItemLocalSource implements WeatherDataSource {
                     @Override
                     public void run() {
                         if (item == null || item.isEmpty()) {
-                            callback.onDataNotAvailable();
+                            callback.onDataNotAvailable(null);
                         } else {
                             callback.onDataLoaded(item);
                         }
@@ -60,6 +60,7 @@ public class WeatherItemLocalSource implements WeatherDataSource {
 
     @Override
     public void cacheData(WeatherItem data) {
+        weatherDAO.deleteTasks();
         weatherDAO.insertTask(data);
     }
 

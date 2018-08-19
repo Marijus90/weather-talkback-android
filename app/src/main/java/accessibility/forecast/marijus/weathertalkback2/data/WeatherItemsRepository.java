@@ -58,18 +58,17 @@ public class WeatherItemsRepository implements WeatherDataSource {
                     cacheData(data);
                     callback.onDataLoaded(data);
                 } else {
-                    callback.onDataNotAvailable();
+                    callback.onDataNotAvailable(null);
                 }
             }
 
             @Override
-            public void onDataNotAvailable() {
+            public void onDataNotAvailable(String message) {
                 // If client is offline - we are getting data from cache (local repo)
                 if (!isForced) {
                     getDataFromLocalDataSource(callback);
                 } else {
-                    //TODO: Here I should show a toast or msg in UI: "Connect to the Internet in order to get updated data."
-                    callback.onDataNotAvailable();
+                    callback.onDataNotAvailable("Could not connect to internet.");
                 }
 
             }
@@ -85,7 +84,7 @@ public class WeatherItemsRepository implements WeatherDataSource {
                 if (isCacheValid(data.getmDateCreated())) {
                     callback.onDataLoaded(data);
                 } else {
-                    callback.onDataNotAvailable();
+                    callback.onDataNotAvailable(null);
                 }
             }
 
@@ -94,8 +93,8 @@ public class WeatherItemsRepository implements WeatherDataSource {
             }
 
             @Override
-            public void onDataNotAvailable() {
-                callback.onDataNotAvailable();
+            public void onDataNotAvailable(String message) {
+                callback.onDataNotAvailable(null);
             }
         }, false);
     }

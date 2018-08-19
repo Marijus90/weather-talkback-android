@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -131,7 +130,7 @@ public class WeatherFragment extends Fragment implements WeatherContract.View {
 
     @Override
     public void showErrorMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+        noDataAvailable.setText(message);
     }
 
     @Override

@@ -39,7 +39,11 @@ public class WeatherPresenter implements WeatherContract.Presenter {
             }
 
             @Override
-            public void onDataNotAvailable() {
+            public void onDataNotAvailable(String message) {
+                if (message != null) {
+                    view.showErrorMessage(message);
+                }
+
                 view.showNoDataLayout(true);
                 view.setLoadingIndicator(false);
             }
