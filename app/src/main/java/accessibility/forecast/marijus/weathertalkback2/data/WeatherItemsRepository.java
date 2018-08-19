@@ -7,6 +7,16 @@ import accessibility.forecast.marijus.weathertalkback2.helper.DeviceStateUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Concrete implementation to load weather data from the data sources.
+ * <p>
+ * This implements a dumb synchronisation between locally persisted data and data
+ * obtained from the server, by using the remote data source on the first load and if the local
+ * database doesn't exist is empty or expired.
+ * <p>
+ * To improve the implementation it is recommended to create the NetworkBoundResource class
+ * https://developer.android.com/jetpack/docs/guide#addendum
+ */
 public class WeatherItemsRepository implements WeatherDataSource {
 
     private static WeatherItemsRepository INSTANCE = null;
@@ -16,7 +26,6 @@ public class WeatherItemsRepository implements WeatherDataSource {
 
     Forecast cachedForecast;
 
-    // Prevent direct instantiation
     private WeatherItemsRepository(@NonNull WeatherDataSource remoteDataSource,
                                    @NonNull WeatherDataSource localDataSource) {
         this.remoteDataSource = checkNotNull(remoteDataSource);

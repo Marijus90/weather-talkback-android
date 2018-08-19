@@ -15,7 +15,7 @@ At the moment the product is in a prototype stage.
 # Current state of the product (v0.1.0)
 
 ### Minimal requirements for v0.1.0
-The requirements for a simple barebone app on which the extra functionality will be built were:
+The requirements for a simple starter app on which the extra functionality will be built were:
 - See the weather for user current location.
 - Screen shows current conditions, temperature, wind speed and direction, location and time since last update.
 - The weather information should be cached for future offline use (cache expire in 24 hours).
@@ -24,8 +24,10 @@ The requirements for a simple barebone app on which the extra functionality will
 - A message should be displayed to indicate that I need to connect to the - Internet in order to get updated data.
 - A loading indicator if the app is fetching data.
 
-All the above requirements were built except for getting user current location and caching it (as of 19th August, 2018). It will be implemented in the upcoming days.
+All the above requirements were built except for getting user current location and caching it (as of 19th August, 2018). It will be implemented in the upcoming days. Now the app queries the weather data for a hardcoded location - London, UK.
 https://developer.android.com/training/location/retrieve-current
+
+Tests cover presenter, activity, local database code and utility classes.
 
 ### App screenshots
 
@@ -64,10 +66,12 @@ I will continue to regularly update this repo as it's my "pet project" to try ou
 - Add **RxJava2** to implement concurrency, and to further abstract the data layer.
 - Architecture improvements - update project to use Google recommended App Architecture (**MVVM**) https://developer.android.com/jetpack/docs/guide
 - Use **Retrofit** for the API calls instead of 3rd party library for more freedom of customisation.
+- To improve the data fetching flow by implementing a NetworkBoundResource class https://developer.android.com/jetpack/docs/guide#addendum
 
 ### Improvements to make this in to a final product
 - Redesign UI to support rotation and larger screen devices like **tablets**.
 - Display a week of weather information.
+- Add UI tests for the screens.
 - Make sure the data displayed persists on device rotation.
 - Allow user to select multiple locations.
 - Update UI design following **best accessibility practices**.

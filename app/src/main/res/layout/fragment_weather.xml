@@ -25,13 +25,12 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- TODO: Extract dimens -->
     <TextView
         android:id="@+id/tv_no_data_available"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Weather data is not available."
-        android:textSize="20sp"
+        android:text="@string/weather_data_not_available"
+        android:textSize="@dimen/no_data_error_text_size"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -42,8 +41,8 @@
         android:id="@+id/tv_please_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Please refresh when you're online"
-        android:textSize="20sp"
+        android:text="@string/please_refresh"
+        android:textSize="@dimen/no_data_error_text_size"
         android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

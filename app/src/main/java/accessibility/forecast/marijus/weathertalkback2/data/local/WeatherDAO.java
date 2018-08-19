@@ -21,7 +21,6 @@ public interface WeatherDAO {
     @Query("SELECT * FROM items")
     WeatherItem getWeather();
 
-    //TODO: TEST - Cache updating
     /**
      * Insert a weather item in the database. If the item already exists, replace it.
      *

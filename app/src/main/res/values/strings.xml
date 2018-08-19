@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Weather Talkback 2</string>
+
     <string name="updated">Updated: %s</string>
+    <string name="weather_data_not_available">Weather data is not available.</string>
+    <string name="please_refresh">Please refresh when you\'re online</string>
+    <string name="current_condition">Current condition:</string>
+    <string name="temperature">Temperature:</string>
+    <string name="wind_speed">Wind speed:</string>
+    <string name="wind_direction">Wind direction:</string>
+    <string name="image_condition_desc">Image of a weather condition that day</string>
 </resources>

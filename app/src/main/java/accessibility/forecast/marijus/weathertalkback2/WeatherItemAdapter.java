@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.zetterstrom.com.forecast.models.DataPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import accessibility.forecast.marijus.weathertalkback2.helper.ItemDataStringUtil
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DataPoint} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link WeatherItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
 public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.ViewHolder> {
@@ -54,9 +53,6 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
                 "drawable", context.getPackageName()));
         holder.updateTime.setText(context.getString(R.string.updated, currentItem.getmTimeOfDayCreated()));
 
-        //TODO: Show when item was updated
-        // set source to display cached or not
-
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,11 +83,9 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
         public final TextView temperature;
         public final TextView windSpeed;
         public final TextView windDirection;
+        public final TextView updateTime;
         public final ImageView icon;
         public WeatherItem item;
-
-        //TODO: Show when item was updated
-        public final TextView updateTime;
 
         public ViewHolder(View view) {
             super(view);

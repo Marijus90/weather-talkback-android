@@ -72,8 +72,6 @@ public class WeatherFragment extends Fragment implements WeatherContract.View {
             });
         }
 
-        // TODO: Swipe to refresh?
-
         return view;
     }
 
@@ -131,11 +129,6 @@ public class WeatherFragment extends Fragment implements WeatherContract.View {
     @Override
     public void showErrorMessage(String message) {
         noDataAvailable.setText(message);
-    }
-
-    @Override
-    public void showTimeSinceLastDataRefresh() {
-        //TODO: Implement this
     }
 
     @Override

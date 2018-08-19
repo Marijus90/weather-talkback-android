@@ -14,14 +14,11 @@ public interface WeatherContract {
 
         void displayWeatherData(ArrayList<WeatherItem> forecast);
 
-        //TODO: Clean up
         void hideWeatherData();
 
         void showNoDataLayout(boolean active);
 
         void showErrorMessage(String message);
-
-        void showTimeSinceLastDataRefresh();
 
         boolean isActive();
 
