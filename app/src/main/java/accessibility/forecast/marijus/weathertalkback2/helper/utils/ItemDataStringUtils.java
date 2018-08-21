@@ -1,4 +1,4 @@
-package accessibility.forecast.marijus.weathertalkback2.helper;
+package accessibility.forecast.marijus.weathertalkback2.helper.utils;
 
 /**
  * This provides methods to help format the Double values of API response such as temperature in to String.

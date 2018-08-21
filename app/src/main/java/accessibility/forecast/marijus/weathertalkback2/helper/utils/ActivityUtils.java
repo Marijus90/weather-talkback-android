@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package accessibility.forecast.marijus.weathertalkback2.helper;
+package accessibility.forecast.marijus.weathertalkback2.helper.utils;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;

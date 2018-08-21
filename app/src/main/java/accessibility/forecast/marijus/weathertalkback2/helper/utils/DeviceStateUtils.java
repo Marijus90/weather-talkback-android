@@ -1,4 +1,4 @@
-package accessibility.forecast.marijus.weathertalkback2.helper;
+package accessibility.forecast.marijus.weathertalkback2.helper.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

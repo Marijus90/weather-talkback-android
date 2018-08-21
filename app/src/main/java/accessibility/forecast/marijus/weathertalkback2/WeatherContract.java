@@ -24,11 +24,16 @@ public interface WeatherContract {
 
     }
 
-    interface Presenter extends BasePresenter {
+    interface Presenter extends BasePresenter<View> {
 
         void refreshData(boolean isForced);
 
         void updateCachedData(WeatherItem forecast);
 
+        void takeView(WeatherContract.View view);
+
+        void dropView();
+
     }
+
 }

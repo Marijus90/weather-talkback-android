@@ -1,9 +1,11 @@
 package accessibility.forecast.marijus.weathertalkback2.data;
 
 import android.support.annotation.NonNull;
-import android.zetterstrom.com.forecast.models.Forecast;
 
-import accessibility.forecast.marijus.weathertalkback2.helper.DeviceStateUtils;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -17,6 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * To improve the implementation it is recommended to create the NetworkBoundResource class
  * https://developer.android.com/jetpack/docs/guide#addendum
  */
+@Singleton
 public class WeatherItemsRepository implements WeatherDataSource {
 
     private static WeatherItemsRepository INSTANCE = null;
@@ -24,23 +27,11 @@ public class WeatherItemsRepository implements WeatherDataSource {
     private final WeatherDataSource remoteDataSource;
     private final WeatherDataSource localDataSource;
 
-    Forecast cachedForecast;
-
-    private WeatherItemsRepository(@NonNull WeatherDataSource remoteDataSource,
-                                   @NonNull WeatherDataSource localDataSource) {
-        this.remoteDataSource = checkNotNull(remoteDataSource);
-        this.localDataSource = checkNotNull(localDataSource);
-    }
-
-    public static WeatherItemsRepository getInstance(WeatherDataSource remoteDataSource, WeatherDataSource localDataSource) {
-        if (INSTANCE == null) {
-            INSTANCE = new WeatherItemsRepository(remoteDataSource, localDataSource);
-        }
-        return INSTANCE;
-    }
-
-    public static void destroyInstance() {
-        INSTANCE = null;
+    @Inject
+    WeatherItemsRepository(@Remote WeatherDataSource remoteDataSource,
+                    @Local WeatherDataSource localDataSource) {
+        this.remoteDataSource = remoteDataSource;
+        this.localDataSource = localDataSource;
     }
 
     @Override
@@ -110,7 +101,7 @@ public class WeatherItemsRepository implements WeatherDataSource {
 
     @Override
     public void clearCachedData() {
-        cachedForecast = null; //TODO: Did I forget to implement this?
+        //TODO: Implement in-memory cache
         //        remoteDataSource.clear();
         //        localDataSource.clear();
     }

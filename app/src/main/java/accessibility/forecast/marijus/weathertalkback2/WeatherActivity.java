@@ -1,19 +1,19 @@
 package accessibility.forecast.marijus.weathertalkback2;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
-import accessibility.forecast.marijus.weathertalkback2.data.WeatherItemsRepository;
-import accessibility.forecast.marijus.weathertalkback2.data.api.DarkSkyWeatherAPISource;
-import accessibility.forecast.marijus.weathertalkback2.data.local.WeatherDatabase;
-import accessibility.forecast.marijus.weathertalkback2.data.local.WeatherItemLocalSource;
-import accessibility.forecast.marijus.weathertalkback2.helper.ActivityUtils;
-import accessibility.forecast.marijus.weathertalkback2.helper.AppExecutors;
+import javax.inject.Inject;
 
-public class WeatherActivity extends AppCompatActivity {
+import accessibility.forecast.marijus.weathertalkback2.helper.utils.ActivityUtils;
+import dagger.Lazy;
+import dagger.android.support.DaggerAppCompatActivity;
 
-    private WeatherPresenter presenter;
-    private WeatherDatabase database;
+public class WeatherActivity extends DaggerAppCompatActivity {
+
+    @Inject
+    WeatherPresenter presenter;
+    @Inject
+    Lazy<WeatherFragment> weatherFragmentProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,21 +24,10 @@ public class WeatherActivity extends AppCompatActivity {
                 .findFragmentById(R.id.container);
 
         if (weatherFragment == null) {
-            weatherFragment = WeatherFragment.newInstance();
-
+            weatherFragment = weatherFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     weatherFragment, R.id.container);
         }
-
-        //TODO: Use DI framework to decouple the classes
-        database = WeatherDatabase.getInstance(getApplicationContext());
-        presenter = new WeatherPresenter(WeatherItemsRepository.getInstance(DarkSkyWeatherAPISource.getInstance(),
-                WeatherItemLocalSource.getInstance(new AppExecutors(), database.weatherDAO())), weatherFragment);
-
-        // Load previously saved state, if available
-//        if (savedInstanceState != null) {
-//            //Load things
-//        }
 
     }
 

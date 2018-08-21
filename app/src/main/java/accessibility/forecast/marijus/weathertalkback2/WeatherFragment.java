@@ -3,7 +3,6 @@ package accessibility.forecast.marijus.weathertalkback2;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,13 +13,19 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
+import dagger.android.support.DaggerFragment;
 
 /**
  * A fragment representing a list of weather items.
  */
-public class WeatherFragment extends Fragment implements WeatherContract.View {
+@ActivityScoped
+public class WeatherFragment extends DaggerFragment implements WeatherContract.View {
 
+    @Inject
     WeatherContract.Presenter presenter;
 
     private WeatherItemAdapter adapter;
@@ -33,11 +38,8 @@ public class WeatherFragment extends Fragment implements WeatherContract.View {
 
     private OnListFragmentInteractionListener listItemListener;
 
+    @Inject
     public WeatherFragment() {
-    }
-
-    public static WeatherFragment newInstance() {
-        return new WeatherFragment();
     }
 
     @Override
@@ -90,7 +92,7 @@ public class WeatherFragment extends Fragment implements WeatherContract.View {
     @Override
     public void onResume() {
         super.onResume();
-        presenter.start();
+        presenter.takeView(this);
     }
 
     @Override
@@ -136,13 +138,14 @@ public class WeatherFragment extends Fragment implements WeatherContract.View {
         return isAdded();
     }
 
-    @Override
-    public void setPresenter(WeatherContract.Presenter presenter) {
-        this.presenter = presenter;
-    }
-
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(WeatherItem item);
+    }
+
+    @Override
+    public void onDestroy() {
+        presenter.dropView();
+        super.onDestroy();
     }
 
 }

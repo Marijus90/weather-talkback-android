@@ -1,7 +1,9 @@
 package accessibility.forecast.marijus.weathertalkback2.data.local;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
@@ -10,30 +12,18 @@ import accessibility.forecast.marijus.weathertalkback2.helper.AppExecutors;
 /**
  * Concrete implementation of the data source as a database.
  */
+@Singleton
 public class WeatherItemLocalSource implements WeatherDataSource {
 
-    private static volatile WeatherItemLocalSource INSTANCE;
+    private final WeatherDAO weatherDAO;
 
-    private WeatherDAO weatherDAO;
+    private final AppExecutors appExecutors;
 
-    private AppExecutors appExecutors;
-
-    private WeatherItemLocalSource(@NonNull AppExecutors appExecutors,
+    @Inject
+    public WeatherItemLocalSource(@NonNull AppExecutors appExecutors,
                                    @NonNull WeatherDAO weatherDAO) {
         this.appExecutors = appExecutors;
         this.weatherDAO = weatherDAO;
-    }
-
-    public static WeatherItemLocalSource getInstance(@NonNull AppExecutors appExecutors,
-                                                     @NonNull WeatherDAO tasksDao) {
-        if (INSTANCE == null) {
-            synchronized (WeatherItemLocalSource.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = new WeatherItemLocalSource(appExecutors, tasksDao);
-                }
-            }
-        }
-        return INSTANCE;
     }
 
     @Override
@@ -78,11 +68,6 @@ public class WeatherItemLocalSource implements WeatherDataSource {
             }
         };
         appExecutors.diskIO().execute(deleteRunnable);
-    }
-
-    @VisibleForTesting
-    static void clearInstance() {
-        INSTANCE = null;
     }
 
 }

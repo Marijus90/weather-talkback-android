@@ -8,30 +8,27 @@ import android.zetterstrom.com.forecast.models.Forecast;
 import android.zetterstrom.com.forecast.models.Language;
 import android.zetterstrom.com.forecast.models.Unit;
 
+import javax.inject.Singleton;
+
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
-import accessibility.forecast.marijus.weathertalkback2.helper.DeviceStateUtils;
+import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Implementation of data source that gets the data from a Dark Sky API
+ */
+@Singleton
 public class DarkSkyWeatherAPISource implements WeatherDataSource {
-
-    private static DarkSkyWeatherAPISource INSTANCE;
 
     private ForecastConfiguration configuration;
     private Double latitude;
     private Double longitude;
 
-    public static DarkSkyWeatherAPISource getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new DarkSkyWeatherAPISource();
-        }
-        return INSTANCE;
-    }
+    public DarkSkyWeatherAPISource() {
 
-    // Prevent direct instantiation.
-    private DarkSkyWeatherAPISource() {
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.List;
 
 import accessibility.forecast.marijus.weathertalkback2.WeatherFragment.OnListFragmentInteractionListener;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
-import accessibility.forecast.marijus.weathertalkback2.helper.ItemDataStringUtils;
+import accessibility.forecast.marijus.weathertalkback2.helper.utils.ItemDataStringUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -98,4 +98,5 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
             updateTime = view.findViewById(R.id.tv_time_updated);
         }
     }
+
 }

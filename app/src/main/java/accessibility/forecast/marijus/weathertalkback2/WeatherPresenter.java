@@ -1,30 +1,41 @@
 package accessibility.forecast.marijus.weathertalkback2;
 
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItemsRepository;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+/**
+ * This class listens to user actions from the UI ({@link WeatherFragment}), retrieves the data and updates the
+ * UI as required.
+ * <p/>
+ * By marking the constructor with {@code @Inject}, Dagger injects the dependencies required to
+ * create an instance of the WeatherPresenter (if it fails, it emits a compiler error).  It uses
+ * {@link WeatherModule} to do so.
+ **/
+@ActivityScoped
 public class WeatherPresenter implements WeatherContract.Presenter {
 
     private final WeatherItemsRepository weatherRepository;
-    private final WeatherContract.View view;
+    @Nullable
+    private WeatherContract.View view;
 
-    public WeatherPresenter(@NonNull WeatherItemsRepository weatherRepository, @NonNull WeatherContract.View view) {
-        this.weatherRepository = checkNotNull(weatherRepository, "repository cannot be null");
-        this.view = checkNotNull(view, "view must be implemented");
-
-        this.view.setPresenter(this);
+    @Inject
+    WeatherPresenter(WeatherItemsRepository weatherRepository) {
+        this.weatherRepository = weatherRepository;
     }
 
     @Override
     public void refreshData(boolean isForced) {
-        view.setLoadingIndicator(true);
+        if (view != null) {
+            view.setLoadingIndicator(true);
+        }
 
         weatherRepository.getWeatherData(new WeatherDataSource.GetWeatherDataCallback() {
 
@@ -33,19 +44,27 @@ public class WeatherPresenter implements WeatherContract.Presenter {
                 if (!data.isEmpty()) {
                     processWeatherData(data);
                 } else {
-                    view.showNoDataLayout(true);
+                    if (view != null) {
+                        view.showNoDataLayout(true);
+                    }
                 }
-                view.setLoadingIndicator(false);
+                if (view != null) {
+                    view.setLoadingIndicator(false);
+                }
             }
 
             @Override
             public void onDataNotAvailable(String message) {
                 if (message != null) {
-                    view.showErrorMessage(message);
+                    if (view != null) {
+                        view.showErrorMessage(message);
+                    }
                 }
 
-                view.showNoDataLayout(true);
-                view.setLoadingIndicator(false);
+                if (view != null) {
+                    view.showNoDataLayout(true);
+                    view.setLoadingIndicator(false);
+                }
             }
         }, isForced);
     }
@@ -53,7 +72,9 @@ public class WeatherPresenter implements WeatherContract.Presenter {
     private void processWeatherData(WeatherItem data) {
         ArrayList<WeatherItem> weatherData = new ArrayList<>();
         weatherData.add(data);
-        view.displayWeatherData(weatherData);
+        if (view != null) {
+            view.displayWeatherData(weatherData);
+        }
     }
 
     @Override
@@ -61,9 +82,15 @@ public class WeatherPresenter implements WeatherContract.Presenter {
         weatherRepository.cacheData(forecast);
     }
 
+
     @Override
-    public void start() {
+    public void takeView(WeatherContract.View view) {
+        this.view = view;
         refreshData(false);
     }
 
+    @Override
+    public void dropView() {
+        view = null;
+    }
 }
