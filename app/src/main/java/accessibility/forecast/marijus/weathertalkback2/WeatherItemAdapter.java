@@ -1,6 +1,7 @@
 package accessibility.forecast.marijus.weathertalkback2;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import java.util.List;
 import accessibility.forecast.marijus.weathertalkback2.WeatherFragment.OnListFragmentInteractionListener;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.utils.ItemDataStringUtils;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -33,15 +36,16 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
         this.context = context;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_weatheritem, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         WeatherItem currentItem = weatherItems.get(position);
 
         holder.item = currentItem;
@@ -79,23 +83,24 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        public final TextView condition;
-        public final TextView temperature;
-        public final TextView windSpeed;
-        public final TextView windDirection;
-        public final TextView updateTime;
-        public final ImageView icon;
         public WeatherItem item;
+        @BindView(R.id.tv_condition_value)
+        TextView condition;
+        @BindView(R.id.tv_temperature_value)
+        TextView temperature;
+        @BindView(R.id.tv_wind_speed_value)
+        TextView windSpeed;
+        @BindView(R.id.tv_wind_direction_value)
+        TextView windDirection;
+        @BindView(R.id.tv_time_updated)
+        TextView updateTime;
+        @BindView(R.id.iv_weather_icon)
+        ImageView icon;
 
         public ViewHolder(View view) {
             super(view);
+            ButterKnife.bind(this, view);
             this.view = view;
-            condition = view.findViewById(R.id.tv_condition_value);
-            temperature = view.findViewById(R.id.tv_temperature_value);
-            windSpeed = view.findViewById(R.id.tv_wind_speed_value);
-            windDirection = view.findViewById(R.id.tv_wind_direction_value);
-            icon = view.findViewById(R.id.iv_weather_icon);
-            updateTime = view.findViewById(R.id.tv_time_updated);
         }
     }
 

@@ -1,11 +1,13 @@
-package accessibility.forecast.marijus.weathertalkback2.helper.di;
+package accessibility.forecast.marijus.weathertalkback2.helper.di.components;
 
 import android.app.Application;
 
 import javax.inject.Singleton;
 
 import accessibility.forecast.marijus.weathertalkback2.base.WeatherApp;
-import accessibility.forecast.marijus.weathertalkback2.data.WeatherRepositoryModule;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.modules.ActivityBindingModule;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.modules.ApplicationModule;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.modules.WeatherRepositoryModule;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjector;

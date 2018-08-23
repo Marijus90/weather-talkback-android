@@ -2,7 +2,6 @@ package accessibility.forecast.marijus.weathertalkback2;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +16,9 @@ import javax.inject.Inject;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import dagger.android.support.DaggerFragment;
 
 /**
@@ -28,15 +30,21 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
     @Inject
     WeatherContract.Presenter presenter;
 
+    @BindView(R.id.list)
+    RecyclerView recyclerView;
+
+    @BindView(R.id.progress_indicator)
+    ProgressBar loadingIndicator;
+
+    @BindView(R.id.tv_no_data_available)
+    TextView noDataAvailable;
+
+    @BindView(R.id.tv_please_refresh)
+    TextView noDataAvailableRefresh;
+
     private WeatherItemAdapter adapter;
-    private RecyclerView recyclerView;
-    private FloatingActionButton refreshBtn;
-
-    private ProgressBar loadingIndicator;
-    private TextView noDataAvailable;
-    private TextView noDataAvailableRefresh;
-
     private OnListFragmentInteractionListener listItemListener;
+    private Unbinder unbinder;
 
     @Inject
     public WeatherFragment() {
@@ -51,28 +59,13 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_weather, container, false);
+        unbinder = ButterKnife.bind(this, view);
 
         Context context = view.getContext();
-        loadingIndicator = view.findViewById(R.id.progress_indicator);
-        noDataAvailable = view.findViewById(R.id.tv_no_data_available);
-        noDataAvailableRefresh = view.findViewById(R.id.tv_please_refresh);
-        recyclerView = view.findViewById(R.id.list);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adapter = new WeatherItemAdapter(new ArrayList<WeatherItem>(0), context, listItemListener);
         recyclerView.setAdapter(adapter);
-
-        // Init refresh button
-        refreshBtn = getActivity().findViewById(R.id.fab);
-        if (refreshBtn != null) {
-            refreshBtn.setRippleColor(getResources().getColor(R.color.colorPrimaryDark));
-            refreshBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    presenter.refreshData(true);
-                }
-            });
-        }
 
         return view;
     }
@@ -140,6 +133,12 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
 
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(WeatherItem item);
+    }
+
+    @Override
+    public void onDestroyView() {
+        unbinder.unbind();
+        super.onDestroyView();
     }
 
     @Override

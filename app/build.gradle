@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "v0.1.1"
+        versionName "v0.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,6 +32,10 @@ dependencies {
 
     //3rd party libs
     api 'android.zetterstrom.com.forecast:forecast:1.2.1'
+
+    //View binding
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // Dagger dependencies
     api "com.google.dagger:dagger:2.17"

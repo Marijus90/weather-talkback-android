@@ -1,7 +1,7 @@
-package accessibility.forecast.marijus.weathertalkback2.helper.di;
+package accessibility.forecast.marijus.weathertalkback2.helper.di.modules;
 
 import accessibility.forecast.marijus.weathertalkback2.WeatherActivity;
-import accessibility.forecast.marijus.weathertalkback2.WeatherModule;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 

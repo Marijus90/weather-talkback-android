@@ -1,5 +1,8 @@
-package accessibility.forecast.marijus.weathertalkback2;
+package accessibility.forecast.marijus.weathertalkback2.helper.di.modules;
 
+import accessibility.forecast.marijus.weathertalkback2.WeatherContract;
+import accessibility.forecast.marijus.weathertalkback2.WeatherFragment;
+import accessibility.forecast.marijus.weathertalkback2.WeatherPresenter;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.FragmentScoped;
 import dagger.Binds;

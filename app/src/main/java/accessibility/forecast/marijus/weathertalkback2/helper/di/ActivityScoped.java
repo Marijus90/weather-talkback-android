@@ -6,6 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Scope;
 
+import accessibility.forecast.marijus.weathertalkback2.helper.di.components.AppComponent;
+
 /**
  * In Dagger, an unscoped component cannot depend on a scoped component. As
  * {@link AppComponent} is a scoped component ({@code @Singleton}, we create a custom

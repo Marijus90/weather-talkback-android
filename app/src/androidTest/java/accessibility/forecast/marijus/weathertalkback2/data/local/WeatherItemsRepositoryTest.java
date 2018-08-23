@@ -39,14 +39,12 @@ public class WeatherItemsRepositoryTest {
                 WeatherDatabase.class).build();
         WeatherDAO weatherDAO = database.weatherDAO();
 
-        WeatherItemLocalSource.clearInstance();
-        localRepository = WeatherItemLocalSource.getInstance(new SingleExecutor(), weatherDAO);
+        localRepository = new WeatherItemLocalSource(new SingleExecutor(), weatherDAO);
     }
 
     @After
     public void clean() {
         database.close();
-        WeatherItemLocalSource.clearInstance();
     }
 
     @Test

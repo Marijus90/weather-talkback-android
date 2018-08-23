@@ -1,4 +1,4 @@
-package accessibility.forecast.marijus.weathertalkback2.data;
+package accessibility.forecast.marijus.weathertalkback2.helper.di.modules;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
@@ -7,6 +7,10 @@ import java.util.concurrent.Executors;
 
 import javax.inject.Singleton;
 
+import accessibility.forecast.marijus.weathertalkback2.data.Local;
+import accessibility.forecast.marijus.weathertalkback2.data.Remote;
+import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
+import accessibility.forecast.marijus.weathertalkback2.data.WeatherItemsRepository;
 import accessibility.forecast.marijus.weathertalkback2.data.api.DarkSkyWeatherAPISource;
 import accessibility.forecast.marijus.weathertalkback2.data.local.WeatherDAO;
 import accessibility.forecast.marijus.weathertalkback2.data.local.WeatherDatabase;

@@ -2,8 +2,8 @@ package accessibility.forecast.marijus.weathertalkback2.base;
 
 import android.app.Application;
 
-import accessibility.forecast.marijus.weathertalkback2.helper.di.AppComponent;
-import accessibility.forecast.marijus.weathertalkback2.helper.di.DaggerAppComponent;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.components.AppComponent;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.components.DaggerAppComponent;
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
 

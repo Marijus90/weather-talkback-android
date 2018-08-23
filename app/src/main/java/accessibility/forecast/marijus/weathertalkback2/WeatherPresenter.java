@@ -10,6 +10,7 @@ import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItemsRepository;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
+import accessibility.forecast.marijus.weathertalkback2.helper.di.modules.WeatherModule;
 
 /**
  * This class listens to user actions from the UI ({@link WeatherFragment}), retrieves the data and updates the
@@ -23,11 +24,12 @@ import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
 public class WeatherPresenter implements WeatherContract.Presenter {
 
     private final WeatherItemsRepository weatherRepository;
+
     @Nullable
     private WeatherContract.View view;
 
     @Inject
-    WeatherPresenter(WeatherItemsRepository weatherRepository) {
+    public WeatherPresenter(WeatherItemsRepository weatherRepository) {
         this.weatherRepository = weatherRepository;
     }
 
@@ -93,4 +95,5 @@ public class WeatherPresenter implements WeatherContract.Presenter {
     public void dropView() {
         view = null;
     }
+
 }
