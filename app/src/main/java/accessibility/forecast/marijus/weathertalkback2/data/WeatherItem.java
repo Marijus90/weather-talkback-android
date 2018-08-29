@@ -6,12 +6,14 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.zetterstrom.com.forecast.models.Icon;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
 import java.util.UUID;
+
+import accessibility.forecast.marijus.weathertalkback2.data.api.models.Currently;
+import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
 
 /**
  * Immutable model class for a weather item db.
@@ -60,7 +62,7 @@ public final class WeatherItem {
      * Using this constructor to create a new weather item.
      */
     @Ignore
-    public WeatherItem(@Nullable String mSummary, @Nullable Icon mIcon, @Nullable Double mTemperature,
+    public WeatherItem(@Nullable String mSummary, @Nullable String mIcon, @Nullable Double mTemperature,
                        @Nullable Double mWindSpeed, @Nullable Double mWindBearing, @Nullable String timeCreated, @Nullable String dateCreated) {
         this(mSummary, mIcon, UUID.randomUUID().toString(), mTemperature, mWindSpeed, mWindBearing, timeCreated, dateCreated);
     }
@@ -73,11 +75,11 @@ public final class WeatherItem {
      * @param windSpeed     speed of the wind (mph)
      */
     @Ignore
-    public WeatherItem(@Nullable String condition, @Nullable Icon icon, @NonNull String id,
+    public WeatherItem(@Nullable String condition, @Nullable String icon, @NonNull String id,
                        @Nullable Double temperature, @Nullable Double windSpeed, @Nullable Double windDirection, @Nullable String timeCreated, @Nullable String dateCreated) {
         mId = id;
         mSummary = condition;
-        mIcon = icon.getText();
+        mIcon = icon;
         mTemperature = temperature;
         mWindSpeed = windSpeed;
         mWindBearing = windDirection;
@@ -98,6 +100,16 @@ public final class WeatherItem {
         mWindBearing = windDirection;
         mTimeOfDayCreated = timeCreated;
         mDateCreated = dateCreated;
+    }
+
+    /**
+     * Using this constructor to convert Currently item to a weather item.
+     */
+    @Ignore
+    public WeatherItem(Currently responseItem) {
+        this(responseItem.getSummary(), responseItem.getIcon(), UUID.randomUUID().toString(),
+                responseItem.getTemperature(), responseItem.getWindSpeed(), responseItem.getWindBearing(),
+                DeviceStateUtils.getCurrentTimeAsString(), DeviceStateUtils.getCurrentDateAsString());
     }
 
     @NonNull

@@ -1,21 +1,20 @@
 package accessibility.forecast.marijus.weathertalkback2.data.api;
 
 import android.support.annotation.NonNull;
-import android.zetterstrom.com.forecast.ForecastClient;
-import android.zetterstrom.com.forecast.ForecastConfiguration;
-import android.zetterstrom.com.forecast.models.DataPoint;
-import android.zetterstrom.com.forecast.models.Forecast;
-import android.zetterstrom.com.forecast.models.Language;
-import android.zetterstrom.com.forecast.models.Unit;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
-import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
+import accessibility.forecast.marijus.weathertalkback2.data.api.models.Forecast;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Implementation of data source that gets the data from a Dark Sky API
@@ -23,9 +22,12 @@ import retrofit2.Response;
 @Singleton
 public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
-    private ForecastConfiguration configuration;
-    private Double latitude;
-    private Double longitude;
+    private final String API_KEY = "637f66044420531db6fd59fd99c20771";
+    private final String BASE_URL = "https://api.darksky.net/forecast/";
+    private final String UNITS = "uk2";
+
+    private String latitude;
+    private String longitude;
 
     public DarkSkyWeatherAPISource() {
 
@@ -33,51 +35,50 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
     @Override
     public void getWeatherData(final @NonNull GetWeatherDataCallback callback, boolean isForced) {
-        if (configuration == null) {
-            configureForecastClient();
-        }
 
-        ForecastClient.getInstance()
-                .getForecast(latitude, longitude, new Callback<Forecast>() {
-                    @Override
-                    public void onResponse(Call<Forecast> forecastCall, Response<Forecast> response) {
-                        if (response.isSuccessful()) {
-                            //TODO: Use adapter pattern ?
-                            DataPoint responseItem = response.body().getCurrently();
-                            callback.onDataLoaded(new WeatherItem(responseItem.getSummary(),
-                                    responseItem.getIcon(), responseItem.getTemperature(),
-                                    responseItem.getWindSpeed(), responseItem.getWindBearing(),
-                                    DeviceStateUtils.getCurrentTimeAsString(),
-                                    DeviceStateUtils.getCurrentDateAsString()));
-                        } else {
-                            callback.onDataNotAvailable(null);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Forecast> forecastCall, Throwable throwable) {
-                        callback.onDataNotAvailable(null);
-                    }
-                });
-    }
-
-    private void configureForecastClient() {
         getDeviceLocation();
 
-        configuration =
-                new ForecastConfiguration.Builder("637f66044420531db6fd59fd99c20771")
-                        .setDefaultLanguage(Language.ENGLISH)
-                        .setDefaultUnit(Unit.UK)
-                        .setConnectionTimeout(4)
-                        .build();
-        ForecastClient.create(configuration);
+        WeatherAPIService service = configureRetrofit();
+
+        Call<Forecast> call = service.getCurrentWeather(API_KEY, latitude, longitude, UNITS);
+
+        call.enqueue(new Callback<Forecast>() {
+            @Override
+            public void onResponse(Call<Forecast> call, Response<Forecast> response) {
+                if (response.isSuccessful()) {
+                    callback.onDataLoaded(new WeatherItem(response.body().getCurrently()));
+                } else {
+                    callback.onDataNotAvailable(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Forecast> call, Throwable t) {
+                callback.onDataNotAvailable(null);
+            }
+        });
+    }
+
+    private WeatherAPIService configureRetrofit() {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .readTimeout(4, TimeUnit.SECONDS)
+                .connectTimeout(4, TimeUnit.SECONDS)
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        return retrofit.create(WeatherAPIService.class);
     }
 
     private void getDeviceLocation() {
         //TODO: Move this to helper class
         // Hardcoded location of London
-        latitude = 51.5;
-        longitude = -0.08;
+        latitude = String.valueOf(51.5);
+        longitude = String.valueOf(-0.08);
     }
 
     @Override
