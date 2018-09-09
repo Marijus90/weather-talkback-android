@@ -1,6 +1,6 @@
 # Welcome to Weather Talkback (Accessibility) app project page!
 
-Rev. 19/08/2018 (1)
+Rev. 09/09/2018 (2)
 
 ![X|X](http://i68.tinypic.com/dxnvoj.png)
 
@@ -12,9 +12,9 @@ This will be a weather forecast app build following the best accessibility pract
 At the moment the product is in a prototype stage.
 
 
-# Current state of the product (v0.1.0)
+# Current state of the product (v0.1.2)
 
-### Minimal requirements for v0.1.0
+### Minimal requirements for v0.1.2
 The requirements for a simple starter app on which the extra functionality will be built were:
 - See the weather for user current location.
 - Screen shows current conditions, temperature, wind speed and direction, location and time since last update.
@@ -24,9 +24,6 @@ The requirements for a simple starter app on which the extra functionality will 
 - A message should be displayed to indicate that I need to connect to the - Internet in order to get updated data.
 - A loading indicator if the app is fetching data.
 
-All the above requirements were built except for getting user current location and caching it (as of 19th August, 2018). It will be implemented in the upcoming days. Now the app queries the weather data for a hardcoded location - London, UK.
-https://developer.android.com/training/location/retrieve-current
-
 Tests cover presenter, activity, local database code and utility classes.
 
 ### App screenshots
@@ -35,20 +32,24 @@ Tests cover presenter, activity, local database code and utility classes.
 
 ### Architecture & project file structure
 
-I've chosen to build this project in MVP (Model-View-Presenter) architecture as its simples design pattern that allows easy testing of the code base.
+I've chosen to build this project in MVP (**Model-View-Presenter**) architecture as it is a simple design pattern that allows easy testing of the code base.
 ![X|X](https://github.com/googlesamples/android-architecture/wiki/images/mvp.png)
 
 To keep the business logic separate from the views the project files were structured in the following way
 ![X|X](http://i65.tinypic.com/kbzsyv.png)
 ### Libraries used (and why)
-I'm only using **one third-party library** for the project 
-https://github.com/kevinzetterstrom/forecast-android
-It allowed me to build the app quicker as it takes care of the Dark Skies API call, allows a fast configuration and has all the data models in it.
+I'm using **Retrofit 2** Library to hande the Dark Skies API call.
 
-I've trusted caching of data to the **Android Room Persistence Library**. Of course it would have been quicker to store the weather data from the API as a **Parcelable** object in the Shared Preferences, but I've been excited to work with Room and believe it will allow me for easier app data management and feature extendability as in future version of the app I will be loading whole weeks worth of data.
+I've trusted handing of data persistence to the **Android Room Library**. I've been excited to work with Room and believe it will allow me for easier app data management and feature extendability as in future version of the app I will be managing a whole weeks worth of data.
 
-For testing I'm using the standard libs:
-**JUnit**, **Mockito**, **Hamcrest**, **Espresso**.
+For field and method binding for Android views I'm using the lightweight **Butterknife** library.
+
+Google's **Dagger 2** manages dependencies between the classes in the app.
+
+For UI I'm using additional Google's **Constraint Layout** and **RecyclerView** libraries.
+
+For testing I'm using the following:
+**JUnit**, **Mockito**, **Hamcrest**, (TODO: ADD **Espresso** tests).
 
 ### Classes and their functions
 (TODO: List the classes)
@@ -60,20 +61,19 @@ For testing I'm using the standard libs:
 I will continue to regularly update this repo as it's my "pet project" to try out new features or technologies that Google might release in the future.
 
 ### Improvements to code base
-- Keep on improving codebase and exploring other Android Architectural Components that might benefit the app (for learning purposes mostly).
+- Keep on improving codebase and continue exploring other Android Architectural Components that might benefit the app (for learning purposes mostly).
 - Rewrite the app in **Kotlin** (for learning purposes).
-- Use a **dependency injection** library to decouple some of the classes and improve the tests.
 - Add **RxJava2** to implement concurrency, and to further abstract the data layer.
 - Architecture improvements - update project to use Google recommended App Architecture (**MVVM**) https://developer.android.com/jetpack/docs/guide
-- Use **Retrofit** for the API calls instead of 3rd party library for more freedom of customisation.
 - To improve the data fetching flow by implementing a NetworkBoundResource class https://developer.android.com/jetpack/docs/guide#addendum
 
 ### Improvements to make this in to a final product
 - Redesign UI to support rotation and larger screen devices like **tablets**.
+- Create a weather item details screen.
 - Display a week of weather information.
 - Add UI tests for the screens.
 - Make sure the data displayed persists on device rotation.
-- Allow user to select multiple locations.
+- Allow user to select multiple locations to fetch the weather data for.
 - Update UI design following **best accessibility practices**.
 - Add a **text-to-speech API** so that selecting a weather entry in the list would read out the summary.
 - Add other accessibility features, descriptions to UI elements.
