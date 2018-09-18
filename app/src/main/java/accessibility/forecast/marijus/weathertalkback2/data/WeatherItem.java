@@ -8,18 +8,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Strings;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.UUID;
 
-import accessibility.forecast.marijus.weathertalkback2.data.api.models.Currently;
-import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
-
-/**
- * Immutable model class for a weather item in the database.
- */
 @Entity(tableName = "items")
-public final class WeatherItem {
+public class WeatherItem {
 
     @PrimaryKey
     @NonNull
@@ -27,89 +21,76 @@ public final class WeatherItem {
     public String mId;
 
     @Nullable
-    @ColumnInfo(name = "condition")
-    public String mSummary;
+    @ColumnInfo(name = "time")
+    @SerializedName("time")
+    private Long time;
+
+    @Nullable
+    @ColumnInfo(name = "summary")
+    @SerializedName("summary")
+    private String summary;
 
     @Nullable
     @ColumnInfo(name = "icon")
-    public String mIcon;
+    @SerializedName("icon")
+    private String icon;
 
     @Nullable
-    @ColumnInfo(name = "temperature")
-    public Double mTemperature;
+    @ColumnInfo(name = "temperatureHigh")
+    @SerializedName("temperatureHigh")
+    private Double temperatureHigh;
+
+    @Nullable
+    @ColumnInfo(name = "temperatureLow")
+    @SerializedName("temperatureLow")
+    private Double temperatureLow;
 
     @Nullable
     @ColumnInfo(name = "windSpeed")
-    public Double mWindSpeed;
+    @SerializedName("windSpeed")
+    private Double windSpeed;
 
     @Nullable
-    @ColumnInfo(name = "windDirection")
-    public Double mWindBearing;
-
-    @Nullable
-    @ColumnInfo(name = "timeWhenCreated")
-    public String mTimeOfDayCreated;
-
-    @Nullable
-    @ColumnInfo(name = "dateWhenCreated")
-    public String mDateCreated;
+    @ColumnInfo(name = "windBearing")
+    @SerializedName("windBearing")
+    private Double windBearing;
 
     public WeatherItem() {
-
+        setmId(UUID.randomUUID().toString());
     }
 
     /**
      * Using this constructor to create a new weather item.
      */
     @Ignore
-    public WeatherItem(@Nullable String mSummary, @Nullable String mIcon, @Nullable Double mTemperature,
-                       @Nullable Double mWindSpeed, @Nullable Double mWindBearing, @Nullable String timeCreated, @Nullable String dateCreated) {
-        this(mSummary, mIcon, UUID.randomUUID().toString(), mTemperature, mWindSpeed, mWindBearing, timeCreated, dateCreated);
+    public WeatherItem(@Nullable Long time, @Nullable String summary, @Nullable String icon, @Nullable Double temperatureHigh, @Nullable Double temperatureLow,
+                       @Nullable Double windSpeed, @Nullable Double windBearing){
+//    , @Nullable String timeCreated, @Nullable String dateCreated) {
+
+        this(UUID.randomUUID().toString(), time, summary, icon, temperatureHigh, temperatureLow, windSpeed, windBearing); //, timeCreated, dateCreated);
     }
 
     /**
-     * @param condition     summary of the weather (ex. cloudy, windy etc.)
+     * @param summary     summary of the weather (ex. cloudy, windy etc.)
      * @param icon          icon of the weather corresponding to condition
-     * @param temperature   temperature
-     * @param windDirection direction of the wind (degrees)
+     * @param temperatureHigh   temperature at day
+     * @param temperatureLow   temperature at night
+     * @param windBearing direction of the wind (degrees)
      * @param windSpeed     speed of the wind (mph)
      */
     @Ignore
-    public WeatherItem(@Nullable String condition, @Nullable String icon, @NonNull String id,
-                       @Nullable Double temperature, @Nullable Double windSpeed, @Nullable Double windDirection, @Nullable String timeCreated, @Nullable String dateCreated) {
-        mId = id;
-        mSummary = condition;
-        mIcon = icon;
-        mTemperature = temperature;
-        mWindSpeed = windSpeed;
-        mWindBearing = windDirection;
-        mTimeOfDayCreated = timeCreated;
-        mDateCreated = dateCreated;
-    }
-
-    /**
-     * Using this constructor for testing only.
-     */
-    @Ignore
-    public WeatherItem(String condition, String icon, double temperature, double windSpeed, double windDirection, String timeCreated, String dateCreated) {
-        mId = UUID.randomUUID().toString();
-        mSummary = condition;
-        mIcon = icon;
-        mTemperature = temperature;
-        mWindSpeed = windSpeed;
-        mWindBearing = windDirection;
-        mTimeOfDayCreated = timeCreated;
-        mDateCreated = dateCreated;
-    }
-
-    /**
-     * Using this constructor to convert Currently item to a weather item.
-     */
-    @Ignore
-    public WeatherItem(Currently responseItem) {
-        this(responseItem.getSummary(), responseItem.getIcon(), UUID.randomUUID().toString(),
-                responseItem.getTemperature(), responseItem.getWindSpeed(), responseItem.getWindBearing(),
-                DeviceStateUtils.getCurrentTimeAsString(), DeviceStateUtils.getCurrentDateAsString());
+    public WeatherItem(@NonNull String id, @Nullable Long time, @Nullable String summary, @Nullable String icon, @Nullable Double temperatureHigh, @Nullable Double temperatureLow,
+                       @Nullable Double windSpeed, @Nullable Double windBearing){ //, @Nullable String timeCreated, @Nullable String dateCreated) {
+        this.mId = id;
+        this.time = time;
+        this.summary = summary;
+        this.icon = icon;
+        this.temperatureHigh = temperatureHigh;
+        this.temperatureLow = temperatureLow;
+        this.windSpeed = windSpeed;
+        this.windBearing = windBearing;
+//        mTimeOfDayCreated = timeCreated;
+//        mDateCreated = dateCreated;
     }
 
     @NonNull
@@ -117,71 +98,71 @@ public final class WeatherItem {
         return mId;
     }
 
-    @Nullable
-    public String getmSummary() {
-        return mSummary;
-    }
-
-    @Nullable
-    public String getmIcon() {
-        return mIcon;
-    }
-
-    @Nullable
-    public Double getmTemperature() {
-        return mTemperature;
-    }
-
-    @Nullable
-    public Double getmWindSpeed() {
-        return mWindSpeed;
-    }
-
-    @Nullable
-    public Double getmWindBearing() {
-        return mWindBearing;
-    }
-
-    @Nullable
-    public String getmTimeOfDayCreated() {
-        return mTimeOfDayCreated;
-    }
-
-    @Nullable
-    public String getmDateCreated() {
-        return mDateCreated;
-    }
-
     public void setmId(@NonNull String mId) {
         this.mId = mId;
     }
 
-    public void setmSummary(@Nullable String mSummary) {
-        this.mSummary = mSummary;
+    @Nullable
+    public Long getTime() {
+        return time;
     }
 
-    public void setmIcon(@Nullable String mIcon) {
-        this.mIcon = mIcon;
+    public void setTime(@Nullable Long time) {
+        this.time = time;
     }
 
-    public void setmTemperature(@Nullable Double mTemperature) {
-        this.mTemperature = mTemperature;
+    @Nullable
+    public String getSummary() {
+        return summary;
     }
 
-    public void setmWindSpeed(@Nullable Double mWindSpeed) {
-        this.mWindSpeed = mWindSpeed;
+    public void setSummary(@Nullable String summary) {
+        this.summary = summary;
     }
 
-    public void setmWindBearing(@Nullable Double mWindBearing) {
-        this.mWindBearing = mWindBearing;
+    @Nullable
+    public String getIcon() {
+        return icon;
     }
 
-    public void setmTimeOfDayCreated(@Nullable String mTimeOfDayCreated) {
-        this.mTimeOfDayCreated = mTimeOfDayCreated;
+    public void setIcon(@Nullable String icon) {
+        this.icon = icon;
     }
 
-    public void setmDateCreated(@Nullable String mDateCreated) {
-        this.mDateCreated = mDateCreated;
+    @Nullable
+    public Double getTemperatureHigh() {
+        return temperatureHigh;
+    }
+
+    public void setTemperatureHigh(@Nullable Double temperatureHigh) {
+        this.temperatureHigh = temperatureHigh;
+    }
+
+    @Nullable
+    public Double getTemperatureLow() {
+        return temperatureLow;
+    }
+
+    public void setTemperatureLow(@Nullable Double temperatureLow) {
+        this.temperatureLow = temperatureLow;
+    }
+
+    @Nullable
+    public Double getWindSpeed() {
+        return windSpeed;
+    }
+
+    public void setWindSpeed(@Nullable Double windSpeed) {
+        this.windSpeed = windSpeed;
+    }
+
+    @Nullable
+    public Double getWindBearing() {
+        return windBearing;
+    }
+
+    public void setWindBearing(@Nullable Double windBearing) {
+        this.windBearing = windBearing;
     }
 
     @Override
@@ -189,22 +170,13 @@ public final class WeatherItem {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         WeatherItem item = (WeatherItem) object;
-        return Objects.equal(mSummary, item.mSummary) &&
+        return Objects.equal(summary, item.summary) &&
 //                Objects.equal(mId, item.mId) &&
-                Objects.equal(mIcon, item.mIcon) &&
-                Objects.equal(mTemperature, item.mTemperature) &&
-                Objects.equal(mWindSpeed, item.mWindSpeed) &&
-                Objects.equal(mWindBearing, item.mWindBearing);
-    }
-
-    public boolean isEmpty() {
-        return Strings.isNullOrEmpty(mSummary) &&
-                Strings.isNullOrEmpty(mIcon) &&
-                Strings.isNullOrEmpty(mDateCreated) &&
-                Strings.isNullOrEmpty(mTimeOfDayCreated) &&
-                mTemperature != null &&
-                mWindSpeed != null &&
-                mWindBearing != null;
+                Objects.equal(icon, item.icon) &&
+                Objects.equal(temperatureHigh, item.temperatureHigh) &&
+                Objects.equal(temperatureLow, item.temperatureLow) &&
+                Objects.equal(windSpeed, item.windSpeed) &&
+                Objects.equal(windBearing, item.windBearing);
     }
 
 }

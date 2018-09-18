@@ -2,7 +2,6 @@ package accessibility.forecast.marijus.weathertalkback2.data;
 
 import java.util.List;
 
-import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
 import io.reactivex.Observable;
 
 /**
@@ -10,7 +9,7 @@ import io.reactivex.Observable;
  */
 public interface WeatherDataSource {
 
-    Observable<List<WeatherResponseItem>> getRxWeatherData(boolean isForced);
+    Observable<List<WeatherItem>> getRxWeatherData(boolean isForced);
 
     void cacheData(WeatherItem data);
 

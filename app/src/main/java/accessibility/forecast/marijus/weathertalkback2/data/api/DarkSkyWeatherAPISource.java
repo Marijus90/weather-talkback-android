@@ -1,13 +1,11 @@
 package accessibility.forecast.marijus.weathertalkback2.data.api;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
-import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
 import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -29,8 +27,6 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
     private WeatherAPIService configureRetrofit() {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(4, TimeUnit.SECONDS)
-                .connectTimeout(4, TimeUnit.SECONDS)
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -44,7 +40,7 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
     }
 
     @Override
-    public Observable<List<WeatherResponseItem>> getRxWeatherData(boolean isForced) {
+    public Observable<List<WeatherItem>> getRxWeatherData(boolean isForced) {
         //TODO: Investigate why API call takes longer
         return configureRetrofit().getRxCurrentWeather3(WeatherAPIService.API_KEY,
                 latitude, longitude, WeatherAPIService.UNITS, WeatherAPIService.EXCLUDED_BLOCKS)
@@ -53,7 +49,7 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
     private void getDeviceLocation() {
         //TODO: Move this to helper class
-        // Hardcoded location of London
+        // Hardcoded location of London, UK
         latitude = String.valueOf(51.5);
         longitude = String.valueOf(-0.08);
     }

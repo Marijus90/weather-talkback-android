@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import accessibility.forecast.marijus.weathertalkback2.WeatherFragment.OnListFragmentInteractionListener;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
-import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.utils.ItemDataStringUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,9 +27,9 @@ public class WeatherItemListAdapter extends RecyclerView.Adapter<WeatherItemList
 
     private final OnListFragmentInteractionListener listener;
     private final Context context;
-    private ArrayList<WeatherResponseItem> weatherItems;
+    private ArrayList<WeatherItem> weatherItems;
 
-    public WeatherItemListAdapter(ArrayList<WeatherResponseItem> items, Context context, OnListFragmentInteractionListener listener) {
+    public WeatherItemListAdapter(ArrayList<WeatherItem> items, Context context, OnListFragmentInteractionListener listener) {
         weatherItems = items;
         this.listener = listener;
         this.context = context;
@@ -46,8 +45,9 @@ public class WeatherItemListAdapter extends RecyclerView.Adapter<WeatherItemList
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        WeatherResponseItem currentItem = weatherItems.get(position);
+        WeatherItem currentItem = weatherItems.get(position);
 
+        //TODO: Display name of the day and/or full date
         holder.item = currentItem;
         //TODO: Improve the view to remove summary
 //        holder.condition.setText(currentItem.getSummary());
@@ -74,18 +74,18 @@ public class WeatherItemListAdapter extends RecyclerView.Adapter<WeatherItemList
         return weatherItems.size();
     }
 
-    public void replaceData(ArrayList<WeatherResponseItem> dailyWeatherData) {
+    public void replaceData(ArrayList<WeatherItem> dailyWeatherData) {
         setList(dailyWeatherData);
         notifyDataSetChanged();
     }
 
-    private void setList(ArrayList<WeatherResponseItem> dailyWeatherData) {
+    private void setList(ArrayList<WeatherItem> dailyWeatherData) {
         weatherItems = checkNotNull(dailyWeatherData);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        public WeatherResponseItem item;
+        public WeatherItem item;
         @BindView(R.id.tv_condition_value)
         TextView condition;
         @BindView(R.id.tv_temperature_value)

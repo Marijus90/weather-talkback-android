@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItemsRepository;
-import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.modules.WeatherModule;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -103,15 +102,15 @@ public class WeatherPresenter implements WeatherContract.Presenter {
         */
     }
 
-    private void processWeatherData(@NonNull ArrayList<WeatherResponseItem> data) {
+    private void processWeatherData(@NonNull ArrayList<WeatherItem> data) {
         if (view != null) {
             view.displayWeatherData(data);
         }
     }
 
     @Override
-    public void updateCachedData(WeatherItem forecast) {
-        weatherRepository.cacheData(forecast);
+    public void updateCachedData(ArrayList<WeatherItem> weatherData) {
+
     }
 
     @Override

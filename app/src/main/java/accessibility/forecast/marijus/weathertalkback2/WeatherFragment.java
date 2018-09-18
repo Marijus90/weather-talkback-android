@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
+import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -101,7 +101,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
     }
 
     @Override
-    public void displayWeatherData(ArrayList<WeatherResponseItem> dailyWeatherData) {
+    public void displayWeatherData(ArrayList<WeatherItem> dailyWeatherData) {
         adapter.replaceData(dailyWeatherData);
 
         recyclerView.setVisibility(View.VISIBLE);
@@ -132,7 +132,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(WeatherResponseItem item);
+        void onListFragmentInteraction(WeatherItem item);
     }
 
     @Override

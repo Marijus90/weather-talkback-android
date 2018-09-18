@@ -5,6 +5,8 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import java.util.List;
+
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
 
 /**
@@ -19,7 +21,7 @@ public interface WeatherDAO {
      * @return all weather items.
      */
     @Query("SELECT * FROM items")
-    WeatherItem getWeather();
+    List<WeatherItem> getWeather();
 
     /**
      * Insert a weather item in the database. If the item already exists, replace it.
@@ -30,7 +32,7 @@ public interface WeatherDAO {
     void insertWeatherItem(WeatherItem item);
 
     /**
-     * Delete all data in the db.
+     * Delete all data in the items table.
      */
     @Query("DELETE FROM items")
     void deleteWeatherItems();

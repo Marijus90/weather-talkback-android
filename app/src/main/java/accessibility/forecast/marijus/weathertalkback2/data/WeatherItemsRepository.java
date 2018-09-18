@@ -1,12 +1,13 @@
 package accessibility.forecast.marijus.weathertalkback2.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 
 /**
@@ -24,39 +25,51 @@ public class WeatherItemsRepository implements WeatherDataSource {
 
     private final WeatherDataSource remoteDataSource;
     private final WeatherDataSource localDataSource;
+    private ArrayList<WeatherItem> localCache;
+    private boolean isLocalCacheDirty;
 
     @Inject
     WeatherItemsRepository(@Remote WeatherDataSource remoteDataSource,
                            @Local WeatherDataSource localDataSource) {
         this.remoteDataSource = remoteDataSource;
         this.localDataSource = localDataSource;
+        localCache = new ArrayList<>();
     }
 
     @Override
-    public Observable<List<WeatherResponseItem>> getRxWeatherData(boolean isForced) {
+    public Observable<List<WeatherItem>> getRxWeatherData(boolean isForced) {
         //TODO: Remove this toggle after UI is refactored
+        //TODO: if local cache is not null and is not dirty - get cached data,
+        //TODO: then possibly still load api and update the values and cache if needed?
 //        if (shouldFetchRemote(isForced)) {
-        if (true) {
-            return remoteDataSource.getRxWeatherData(true);
+        if (false) {
+            return getAndCacheRxWeatherData();
         }
 
         return localDataSource.getRxWeatherData(false);
     }
 
+    private Observable<List<WeatherItem>> getAndCacheRxWeatherData() {
+        return remoteDataSource.getRxWeatherData(true)
+                .flatMap(weatherItems -> Flowable.fromIterable(weatherItems).doOnNext(item -> {
+                    localDataSource.cacheData(item);
+                    localCache.add(item);
+                }).toList().toObservable())
+                .doOnComplete(() -> isLocalCacheDirty = false);
+    }
+
     private boolean shouldFetchRemote(boolean isForced) {
-        //TODO: Add checking if cached data if valid and if there's network connection
+        //TODO: Add checking if cached data is valid and if there's network connection
         return isForced;
     }
 
-    @Override
     public void cacheData(WeatherItem data) {
-        //TODO: Remove old data then bulk insert new one
         localDataSource.cacheData(data);
     }
 
     @Override
     public void refreshData() {
-
+        isLocalCacheDirty = true;
     }
 
     @Override
@@ -66,8 +79,8 @@ public class WeatherItemsRepository implements WeatherDataSource {
         //        localDataSource.clear();
     }
 
-    public Observable<List<WeatherResponseItem>> getLocalRxWeatherData() {
-        //TODO: Implement this
+    //TODO: Implement the methods below?
+    public Observable<List<WeatherItem>> getLocalRxWeatherData() {
 //        isCacheValid(data.getmDateCreated())
         return localDataSource.getRxWeatherData(true);
     }
