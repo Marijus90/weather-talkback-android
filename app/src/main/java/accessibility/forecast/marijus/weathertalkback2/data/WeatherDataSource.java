@@ -1,21 +1,16 @@
 package accessibility.forecast.marijus.weathertalkback2.data;
 
-import android.support.annotation.NonNull;
+import java.util.List;
+
+import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
+import io.reactivex.Observable;
 
 /**
  * Main entry point for accessing weather data.
  */
 public interface WeatherDataSource {
 
-    interface GetWeatherDataCallback {
-
-        void onDataLoaded(WeatherItem data);
-
-        void onDataNotAvailable(String message);
-
-    }
-
-    void getWeatherData(@NonNull GetWeatherDataCallback callback, boolean isForced);
+    Observable<List<WeatherResponseItem>> getRxWeatherData(boolean isForced);
 
     void cacheData(WeatherItem data);
 

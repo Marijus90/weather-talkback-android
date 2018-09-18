@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
+import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,7 +42,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
     @BindView(R.id.tv_please_refresh)
     TextView noDataAvailableRefresh;
 
-    private WeatherItemAdapter adapter;
+    private WeatherItemListAdapter adapter;
     private OnListFragmentInteractionListener listItemListener;
     private Unbinder unbinder;
 
@@ -64,7 +64,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
         Context context = view.getContext();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new WeatherItemAdapter(new ArrayList<WeatherItem>(0), context, listItemListener);
+        adapter = new WeatherItemListAdapter(new ArrayList<>(0), context, listItemListener);
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -101,7 +101,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
     }
 
     @Override
-    public void displayWeatherData(ArrayList<WeatherItem> dailyWeatherData) {
+    public void displayWeatherData(ArrayList<WeatherResponseItem> dailyWeatherData) {
         adapter.replaceData(dailyWeatherData);
 
         recyclerView.setVisibility(View.VISIBLE);
@@ -132,7 +132,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(WeatherItem item);
+        void onListFragmentInteraction(WeatherResponseItem item);
     }
 
     @Override

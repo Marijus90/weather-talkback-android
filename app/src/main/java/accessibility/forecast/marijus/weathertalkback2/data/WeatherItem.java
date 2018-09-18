@@ -16,7 +16,7 @@ import accessibility.forecast.marijus.weathertalkback2.data.api.models.Currently
 import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
 
 /**
- * Immutable model class for a weather item db.
+ * Immutable model class for a weather item in the database.
  */
 @Entity(tableName = "items")
 public final class WeatherItem {

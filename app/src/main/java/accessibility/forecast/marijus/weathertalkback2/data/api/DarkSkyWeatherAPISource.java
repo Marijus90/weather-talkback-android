@@ -1,19 +1,17 @@
 package accessibility.forecast.marijus.weathertalkback2.data.api;
 
-import android.support.annotation.NonNull;
-
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
-import accessibility.forecast.marijus.weathertalkback2.data.api.models.Forecast;
+import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
+import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -22,41 +20,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Singleton
 public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
-    private final String API_KEY = "637f66044420531db6fd59fd99c20771";
-    private final String BASE_URL = "https://api.darksky.net/forecast/";
-    private final String UNITS = "uk2";
-
     private String latitude;
     private String longitude;
 
     public DarkSkyWeatherAPISource() {
-
-    }
-
-    @Override
-    public void getWeatherData(final @NonNull GetWeatherDataCallback callback, boolean isForced) {
-
         getDeviceLocation();
-
-        WeatherAPIService service = configureRetrofit();
-
-        Call<Forecast> call = service.getCurrentWeather(API_KEY, latitude, longitude, UNITS);
-
-        call.enqueue(new Callback<Forecast>() {
-            @Override
-            public void onResponse(Call<Forecast> call, Response<Forecast> response) {
-                if (response.isSuccessful()) {
-                    callback.onDataLoaded(new WeatherItem(response.body().getCurrently()));
-                } else {
-                    callback.onDataNotAvailable(null);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Forecast> call, Throwable t) {
-                callback.onDataNotAvailable(null);
-            }
-        });
     }
 
     private WeatherAPIService configureRetrofit() {
@@ -67,11 +35,20 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl(BASE_URL)
+                .baseUrl(WeatherAPIService.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
 
         return retrofit.create(WeatherAPIService.class);
+    }
+
+    @Override
+    public Observable<List<WeatherResponseItem>> getRxWeatherData(boolean isForced) {
+        //TODO: Investigate why API call takes longer
+        return configureRetrofit().getRxCurrentWeather3(WeatherAPIService.API_KEY,
+                latitude, longitude, WeatherAPIService.UNITS, WeatherAPIService.EXCLUDED_BLOCKS)
+                .map(forecast -> forecast.getDaily().getItems());
     }
 
     private void getDeviceLocation() {
@@ -88,10 +65,12 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
     @Override
     public void refreshData() {
+
     }
 
     @Override
     public void clearCachedData() {
 
     }
+
 }

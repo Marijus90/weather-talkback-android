@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import accessibility.forecast.marijus.weathertalkback2.WeatherFragment.OnListFragmentInteractionListener;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
+import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.utils.ItemDataStringUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,13 +24,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * {@link RecyclerView.Adapter} that can display a {@link WeatherItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  */
-public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.ViewHolder> {
+public class WeatherItemListAdapter extends RecyclerView.Adapter<WeatherItemListAdapter.ViewHolder> {
 
-    private List<WeatherItem> weatherItems;
     private final OnListFragmentInteractionListener listener;
     private final Context context;
+    private ArrayList<WeatherResponseItem> weatherItems;
 
-    public WeatherItemAdapter(List<WeatherItem> items, Context context, OnListFragmentInteractionListener listener) {
+    public WeatherItemListAdapter(ArrayList<WeatherResponseItem> items, Context context, OnListFragmentInteractionListener listener) {
         weatherItems = items;
         this.listener = listener;
         this.context = context;
@@ -46,16 +46,18 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        WeatherItem currentItem = weatherItems.get(position);
+        WeatherResponseItem currentItem = weatherItems.get(position);
 
         holder.item = currentItem;
-        holder.condition.setText(currentItem.getmSummary());
-        holder.temperature.setText(ItemDataStringUtils.getFormattedAsTemperature(currentItem.getmTemperature()));
-        holder.windSpeed.setText(ItemDataStringUtils.getFormattedAsWindSpeed(currentItem.getmWindSpeed()));
-        holder.windDirection.setText(ItemDataStringUtils.getWindDirectionDescription(currentItem.getmWindBearing()));
-        holder.icon.setImageResource(context.getResources().getIdentifier(ItemDataStringUtils.getFormattedIconName(currentItem.getmIcon()),
+        //TODO: Improve the view to remove summary
+//        holder.condition.setText(currentItem.getSummary());
+        //TODO: Improve the view to show high/low temperatures
+        holder.temperature.setText(ItemDataStringUtils.getFormattedAsTemperature(currentItem.getTemperatureHigh()));
+        holder.windSpeed.setText(ItemDataStringUtils.getFormattedAsWindSpeed(currentItem.getWindSpeed()));
+        holder.windDirection.setText(ItemDataStringUtils.getWindDirectionDescription(currentItem.getWindBearing()));
+        holder.icon.setImageResource(context.getResources().getIdentifier(ItemDataStringUtils.getFormattedIconName(currentItem.getIcon()),
                 "drawable", context.getPackageName()));
-        holder.updateTime.setText(context.getString(R.string.updated, currentItem.getmTimeOfDayCreated()));
+//        holder.updateTime.setText(context.getString(R.string.updated, currentItem.getmTimeOfDayCreated()));
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,18 +74,18 @@ public class WeatherItemAdapter extends RecyclerView.Adapter<WeatherItemAdapter.
         return weatherItems.size();
     }
 
-    public void replaceData(ArrayList<WeatherItem> dailyWeatherData) {
+    public void replaceData(ArrayList<WeatherResponseItem> dailyWeatherData) {
         setList(dailyWeatherData);
         notifyDataSetChanged();
     }
 
-    private void setList(List<WeatherItem> dailyWeatherData) {
+    private void setList(ArrayList<WeatherResponseItem> dailyWeatherData) {
         weatherItems = checkNotNull(dailyWeatherData);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View view;
-        public WeatherItem item;
+        public WeatherResponseItem item;
         @BindView(R.id.tv_condition_value)
         TextView condition;
         @BindView(R.id.tv_temperature_value)

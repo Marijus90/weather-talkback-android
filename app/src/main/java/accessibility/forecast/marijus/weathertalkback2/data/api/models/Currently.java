@@ -4,6 +4,7 @@ package accessibility.forecast.marijus.weathertalkback2.data.api.models;
 import com.google.gson.annotations.SerializedName;
 
 public class Currently {
+    //TODO: Delete this class once local caching is refactored
 
     @SerializedName("time")
     private Integer time;

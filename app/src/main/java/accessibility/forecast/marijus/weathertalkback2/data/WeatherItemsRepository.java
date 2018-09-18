@@ -1,13 +1,13 @@
 package accessibility.forecast.marijus.weathertalkback2.data;
 
-import android.support.annotation.NonNull;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import accessibility.forecast.marijus.weathertalkback2.data.api.models.WeatherResponseItem;
 import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import io.reactivex.Observable;
 
 /**
  * Concrete implementation to load weather data from the data sources.
@@ -22,81 +22,41 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class WeatherItemsRepository implements WeatherDataSource {
 
-    private static WeatherItemsRepository INSTANCE = null;
-
     private final WeatherDataSource remoteDataSource;
     private final WeatherDataSource localDataSource;
 
     @Inject
     WeatherItemsRepository(@Remote WeatherDataSource remoteDataSource,
-                    @Local WeatherDataSource localDataSource) {
+                           @Local WeatherDataSource localDataSource) {
         this.remoteDataSource = remoteDataSource;
         this.localDataSource = localDataSource;
     }
 
     @Override
-    public void getWeatherData(@NonNull GetWeatherDataCallback callback, boolean isForced) {
-        checkNotNull(callback);
-        getDataFromRemoteDataSource(callback, isForced);
+    public Observable<List<WeatherResponseItem>> getRxWeatherData(boolean isForced) {
+        //TODO: Remove this toggle after UI is refactored
+//        if (shouldFetchRemote(isForced)) {
+        if (true) {
+            return remoteDataSource.getRxWeatherData(true);
+        }
+
+        return localDataSource.getRxWeatherData(false);
+    }
+
+    private boolean shouldFetchRemote(boolean isForced) {
+        //TODO: Add checking if cached data if valid and if there's network connection
+        return isForced;
     }
 
     @Override
     public void cacheData(WeatherItem data) {
+        //TODO: Remove old data then bulk insert new one
         localDataSource.cacheData(data);
     }
 
     @Override
     public void refreshData() {
-    }
 
-    private void getDataFromRemoteDataSource(@NonNull final GetWeatherDataCallback callback, final boolean isForced) {
-        remoteDataSource.getWeatherData(new GetWeatherDataCallback() {
-
-            @Override
-            public void onDataLoaded(WeatherItem data) {
-                if (!data.isEmpty()) {
-                    cacheData(data);
-                    callback.onDataLoaded(data);
-                } else {
-                    callback.onDataNotAvailable(null);
-                }
-            }
-
-            @Override
-            public void onDataNotAvailable(String message) {
-                // If client is offline - we are getting data from cache (local repo)
-                if (!isForced) {
-                    getDataFromLocalDataSource(callback);
-                } else {
-                    callback.onDataNotAvailable("Could not connect to internet.");
-                }
-
-            }
-        }, isForced);
-    }
-
-
-    private void getDataFromLocalDataSource(@NonNull final GetWeatherDataCallback callback) {
-        localDataSource.getWeatherData(new GetWeatherDataCallback() {
-
-            @Override
-            public void onDataLoaded(WeatherItem data) {
-                if (isCacheValid(data.getmDateCreated())) {
-                    callback.onDataLoaded(data);
-                } else {
-                    callback.onDataNotAvailable(null);
-                }
-            }
-
-            private boolean isCacheValid(String dateCreated) {
-                return !DeviceStateUtils.isOlderThanOneDay(dateCreated);
-            }
-
-            @Override
-            public void onDataNotAvailable(String message) {
-                callback.onDataNotAvailable(null);
-            }
-        }, false);
     }
 
     @Override
@@ -104,6 +64,16 @@ public class WeatherItemsRepository implements WeatherDataSource {
         //TODO: Implement in-memory cache
         //        remoteDataSource.clear();
         //        localDataSource.clear();
+    }
+
+    public Observable<List<WeatherResponseItem>> getLocalRxWeatherData() {
+        //TODO: Implement this
+//        isCacheValid(data.getmDateCreated())
+        return localDataSource.getRxWeatherData(true);
+    }
+
+    private boolean isCacheValid(String dateCreated) {
+        return !DeviceStateUtils.isOlderThanOneDay(dateCreated);
     }
 
 }
