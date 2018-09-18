@@ -10,7 +10,8 @@
         android:name="accessibility.forecast.marijus.weathertalkback2.WeatherFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="16dp"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
         tools:context=".WeatherFragment"
         tools:listitem="@layout/fragment_weatheritem" />
 
