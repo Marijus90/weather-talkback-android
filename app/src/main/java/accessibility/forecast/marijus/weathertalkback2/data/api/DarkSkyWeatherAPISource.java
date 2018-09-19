@@ -41,7 +41,6 @@ public class DarkSkyWeatherAPISource implements WeatherDataSource {
 
     @Override
     public Observable<List<WeatherItem>> getRxWeatherData(boolean isForced) {
-        //TODO: Investigate why API call takes longer
         return configureRetrofit().getRxCurrentWeather3(WeatherAPIService.API_KEY,
                 latitude, longitude, WeatherAPIService.UNITS, WeatherAPIService.EXCLUDED_BLOCKS)
                 .map(forecast -> forecast.getDaily().getItems());

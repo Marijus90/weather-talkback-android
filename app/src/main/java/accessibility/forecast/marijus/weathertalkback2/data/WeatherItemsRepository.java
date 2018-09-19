@@ -9,10 +9,12 @@ import javax.inject.Singleton;
 import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Concrete implementation to load weather data from the data sources.
  * <p>
+ * //TODO: Update the comment
  * This implements a dumb synchronisation between locally persisted data and data
  * obtained from the server, by using the remote data source on the first load and if the local
  * database doesn't exist is empty or expired.
@@ -42,19 +44,17 @@ public class WeatherItemsRepository implements WeatherDataSource {
         //TODO: if local cache is not null and is not dirty - get cached data,
         //TODO: then possibly still load api and update the values and cache if needed?
 //        if (shouldFetchRemote(isForced)) {
-        if (false) {
+        if (true) {
             return getAndCacheRxWeatherData();
         }
-
         return localDataSource.getRxWeatherData(false);
     }
 
     private Observable<List<WeatherItem>> getAndCacheRxWeatherData() {
         return remoteDataSource.getRxWeatherData(true)
-                .flatMap(weatherItems -> Flowable.fromIterable(weatherItems).doOnNext(item -> {
-                    localDataSource.cacheData(item);
-                    localCache.add(item);
-                }).toList().toObservable())
+                .subscribeOn(Schedulers.io())
+                .flatMap(weatherItems -> Flowable.fromIterable(weatherItems)
+                        .doOnNext(this::cacheData).toList().toObservable())
                 .doOnComplete(() -> isLocalCacheDirty = false);
     }
 
@@ -63,8 +63,9 @@ public class WeatherItemsRepository implements WeatherDataSource {
         return isForced;
     }
 
-    public void cacheData(WeatherItem data) {
-        localDataSource.cacheData(data);
+    public void cacheData(WeatherItem item) {
+        localDataSource.cacheData(item);
+        localCache.add(item);
     }
 
     @Override
@@ -75,8 +76,8 @@ public class WeatherItemsRepository implements WeatherDataSource {
     @Override
     public void clearCachedData() {
         //TODO: Implement in-memory cache
-        //        remoteDataSource.clear();
-        //        localDataSource.clear();
+        localCache.clear();
+        localDataSource.clearCachedData();
     }
 
     //TODO: Implement the methods below?

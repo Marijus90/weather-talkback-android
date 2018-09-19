@@ -20,6 +20,7 @@ public class WeatherItem {
     @ColumnInfo(name = "entryid")
     public String mId;
 
+    //TODO: Use time as Primary Key
     @Nullable
     @ColumnInfo(name = "time")
     @SerializedName("time")

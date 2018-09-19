@@ -9,8 +9,9 @@ import javax.inject.Singleton;
 
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
-import accessibility.forecast.marijus.weathertalkback2.helper.AppExecutors;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Concrete implementation of the data source as a database.
@@ -20,19 +21,16 @@ public class WeatherItemLocalSource implements WeatherDataSource {
 
     private final WeatherDAO weatherDAO;
 
-    private final AppExecutors appExecutors;
-
     @Inject
-    public WeatherItemLocalSource(@NonNull AppExecutors appExecutors,
-                                  @NonNull WeatherDAO weatherDAO) {
-        this.appExecutors = appExecutors;
+    public WeatherItemLocalSource(@NonNull WeatherDAO weatherDAO) {
         this.weatherDAO = weatherDAO;
     }
 
     @Override
     public Observable<List<WeatherItem>> getRxWeatherData(boolean isForced) {
         //TODO: Use Flowable in API and local data classes so that they both return same RX object
-        return Observable.just(weatherDAO.getWeather());
+//        return Observable.just(weatherDAO.getWeather());
+        return weatherDAO.getWeather().toObservable();
     }
 
     @Override
@@ -47,14 +45,11 @@ public class WeatherItemLocalSource implements WeatherDataSource {
 
     @Override
     public void clearCachedData() {
-        //TODO: Remove runnable
-        Runnable deleteRunnable = new Runnable() {
-            @Override
-            public void run() {
-                weatherDAO.deleteWeatherItems();
-            }
-        };
-        appExecutors.diskIO().execute(deleteRunnable);
+         Completable.fromAction(this::clearDataInDatabase).subscribeOn(Schedulers.single()).subscribe();
+    }
+
+    private void clearDataInDatabase() {
+        weatherDAO.deleteWeatherItems();
     }
 
 }

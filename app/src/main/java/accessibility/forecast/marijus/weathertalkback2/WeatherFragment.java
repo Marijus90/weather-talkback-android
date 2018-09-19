@@ -64,7 +64,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
         Context context = view.getContext();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new WeatherItemListAdapter(new ArrayList<>(0), context, listItemListener);
+        adapter = new WeatherItemListAdapter(new ArrayList<>(), context, listItemListener);
         recyclerView.setAdapter(adapter);
 
         return view;

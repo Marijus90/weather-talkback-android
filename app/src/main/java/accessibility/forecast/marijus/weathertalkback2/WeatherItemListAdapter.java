@@ -59,12 +59,9 @@ public class WeatherItemListAdapter extends RecyclerView.Adapter<WeatherItemList
                 "drawable", context.getPackageName()));
 //        holder.updateTime.setText(context.getString(R.string.updated, currentItem.getmTimeOfDayCreated()));
 
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != listener) {
-                    listener.onListFragmentInteraction(holder.item);
-                }
+        holder.view.setOnClickListener(view -> {
+            if (null != listener) {
+                listener.onListFragmentInteraction(holder.item);
             }
         });
     }

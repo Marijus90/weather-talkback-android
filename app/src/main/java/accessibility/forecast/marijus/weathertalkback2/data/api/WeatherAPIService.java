@@ -12,8 +12,7 @@ public interface WeatherAPIService {
     String BASE_URL = "https://api.darksky.net/forecast/";
     String UNITS = "uk2";
     String EXCLUDED_BLOCKS = "minutely,hourly,currently,flags,alerts";
-    //TODO: Include language in the call
-
+    //TODO: Future feature: Include language in the call
 
     @GET("/forecast/{key}/{latitude},{longitude}")
     Observable<Forecast> getRxCurrentWeather3(@Path("key") String key, @Path("latitude") String latitude,
