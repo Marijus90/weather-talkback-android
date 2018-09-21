@@ -48,58 +48,31 @@ public class WeatherPresenter implements WeatherContract.Presenter {
 
         disposable.clear();
 
-        disposable.add(weatherRepository.getRxWeatherData(true)
+        //TODO: Make sure calls aren't duplicated if device is rotated while executing a call
+        disposable.add(weatherRepository.getRxWeatherData(isForced)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(ArrayList::new)
                 .subscribe(
                         response -> {
-                            if (view != null) {
+                            if (response.size() == 0) {
+                                showErrorMessage("No data returned");
+                            } else if (view != null) {
                                 processWeatherData(response);
                                 view.setLoadingIndicator(false);
                             }
                         },
-                        throwable -> {
-                            if (view != null) {
-                                view.showErrorMessage(throwable.getMessage());
-                                view.showNoDataLayout(true);
-                                view.setLoadingIndicator(false);
-                            }
-                        })
+                        throwable -> showErrorMessage(throwable.getMessage())) //TODO: Make the Error messages user friendly
         );
+    }
 
-        /*
-        weatherRepository.getWeatherData(new WeatherDataSource.GetWeatherDataCallback() {
-
-            @Override
-            public void onDataLoaded(WeatherItem data) {
-                if (!data.isEmpty()) {
-                    processWeatherData(data);
-                } else {
-                    if (view != null) {
-                        view.showNoDataLayout(true);
-                    }
-                }
-                if (view != null) {
-                    view.setLoadingIndicator(false);
-                }
-            }
-
-            @Override
-            public void onDataNotAvailable(String message) {
-                if (message != null) {
-                    if (view != null) {
-                        view.showErrorMessage(message);
-                    }
-                }
-
-                if (view != null) {
-                    view.showNoDataLayout(true);
-                    view.setLoadingIndicator(false);
-                }
-            }
-        }, isForced);
-        */
+    private void showErrorMessage(String message) {
+        if (view != null) {
+            view.showErrorMessage(message);
+            //TODO: Show a SnackBar instead
+            view.showNoDataLayout(true);
+            view.setLoadingIndicator(false);
+        }
     }
 
     private void processWeatherData(@NonNull ArrayList<WeatherItem> data) {

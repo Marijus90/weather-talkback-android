@@ -12,10 +12,7 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * Concrete implementation to load weather data from the data sources.
- * <p>
- * //TODO: Update the comment
- * This implements a dumb synchronisation between locally persisted data and data
+ * Concrete implementation to load weather data from the locally persisted data and data
  * obtained from the server, by using the remote data source on the first load and if the local
  * database doesn't exist is empty or expired.
  * <p>
@@ -27,65 +24,63 @@ public class WeatherItemsRepository implements WeatherDataSource {
 
     private final WeatherDataSource remoteDataSource;
     private final WeatherDataSource localDataSource;
-    private ArrayList<WeatherItem> localCache;
-    private boolean isLocalCacheDirty;
+    private ArrayList<WeatherItem> inMemoryCache;
 
     @Inject
     WeatherItemsRepository(@Remote WeatherDataSource remoteDataSource,
                            @Local WeatherDataSource localDataSource) {
         this.remoteDataSource = remoteDataSource;
         this.localDataSource = localDataSource;
-        localCache = new ArrayList<>();
+        inMemoryCache = new ArrayList<>();
     }
 
     @Override
     public Observable<List<WeatherItem>> getRxWeatherData(boolean isForced) {
-        //TODO: Remove this toggle after UI is refactored
-        //TODO: if local cache is not null and is not dirty - get cached data,
-        //TODO: then possibly still load api and update the values and cache if needed?
-//        if (shouldFetchRemote(isForced)) {
-        if (true) {
-            return getAndCacheRxWeatherData();
+        if (isForced) {
+            return getAndCacheRemoteWeatherData();
         }
-        return localDataSource.getRxWeatherData(false);
+
+        if (inMemoryCache.isEmpty()) {
+            return Observable.concat(getAndCacheLocalWeatherData(), getAndCacheRemoteWeatherData())
+                    .filter(list -> !list.isEmpty())
+                    .firstElement()
+                    .toObservable();
+        } else {
+            return Observable.just(inMemoryCache);
+        }
     }
 
-    private Observable<List<WeatherItem>> getAndCacheRxWeatherData() {
+    private Observable<List<WeatherItem>> getAndCacheRemoteWeatherData() {
         return remoteDataSource.getRxWeatherData(true)
                 .subscribeOn(Schedulers.io())
                 .flatMap(weatherItems -> Flowable.fromIterable(weatherItems)
-                        .doOnNext(this::cacheData).toList().toObservable())
-                .doOnComplete(() -> isLocalCacheDirty = false);
+                        .doOnNext(this::cacheData).toList().toObservable());
     }
 
-    private boolean shouldFetchRemote(boolean isForced) {
-        //TODO: Add checking if cached data is valid and if there's network connection
-        return isForced;
+    private Observable<List<WeatherItem>> getAndCacheLocalWeatherData() {
+        return localDataSource.getRxWeatherData(false)
+                .subscribeOn(Schedulers.io())
+                .flatMap(weatherItems -> Flowable.fromIterable(weatherItems)
+                        .doOnNext(item -> inMemoryCache.add(item)).toList().toObservable());
     }
 
     public void cacheData(WeatherItem item) {
         localDataSource.cacheData(item);
-        localCache.add(item);
+        inMemoryCache.add(item);
     }
 
     @Override
     public void refreshData() {
-        isLocalCacheDirty = true;
+
     }
 
     @Override
     public void clearCachedData() {
-        //TODO: Implement in-memory cache
-        localCache.clear();
+        inMemoryCache.clear();
         localDataSource.clearCachedData();
     }
 
-    //TODO: Implement the methods below?
-    public Observable<List<WeatherItem>> getLocalRxWeatherData() {
-//        isCacheValid(data.getmDateCreated())
-        return localDataSource.getRxWeatherData(true);
-    }
-
+    //TODO: Implement this not to load weather data from DB if it's older than 1 day
     private boolean isCacheValid(String dateCreated) {
         return !DeviceStateUtils.isOlderThanOneDay(dateCreated);
     }

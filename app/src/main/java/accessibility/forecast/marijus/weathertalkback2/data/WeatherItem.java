@@ -10,18 +10,11 @@ import android.support.annotation.Nullable;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.UUID;
-
 @Entity(tableName = "items")
 public class WeatherItem {
 
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "entryid")
-    public String mId;
-
-    //TODO: Use time as Primary Key
-    @Nullable
     @ColumnInfo(name = "time")
     @SerializedName("time")
     private Long time;
@@ -57,32 +50,19 @@ public class WeatherItem {
     private Double windBearing;
 
     public WeatherItem() {
-        setmId(UUID.randomUUID().toString());
     }
 
     /**
-     * Using this constructor to create a new weather item.
+     * @param summary         summary of the weather (ex. cloudy, windy etc.)
+     * @param icon            icon of the weather corresponding to condition
+     * @param temperatureHigh temperature at day
+     * @param temperatureLow  temperature at night
+     * @param windBearing     direction of the wind (degrees)
+     * @param windSpeed       speed of the wind (mph)
      */
     @Ignore
-    public WeatherItem(@Nullable Long time, @Nullable String summary, @Nullable String icon, @Nullable Double temperatureHigh, @Nullable Double temperatureLow,
-                       @Nullable Double windSpeed, @Nullable Double windBearing){
-//    , @Nullable String timeCreated, @Nullable String dateCreated) {
-
-        this(UUID.randomUUID().toString(), time, summary, icon, temperatureHigh, temperatureLow, windSpeed, windBearing); //, timeCreated, dateCreated);
-    }
-
-    /**
-     * @param summary     summary of the weather (ex. cloudy, windy etc.)
-     * @param icon          icon of the weather corresponding to condition
-     * @param temperatureHigh   temperature at day
-     * @param temperatureLow   temperature at night
-     * @param windBearing direction of the wind (degrees)
-     * @param windSpeed     speed of the wind (mph)
-     */
-    @Ignore
-    public WeatherItem(@NonNull String id, @Nullable Long time, @Nullable String summary, @Nullable String icon, @Nullable Double temperatureHigh, @Nullable Double temperatureLow,
-                       @Nullable Double windSpeed, @Nullable Double windBearing){ //, @Nullable String timeCreated, @Nullable String dateCreated) {
-        this.mId = id;
+    public WeatherItem(Long time, @Nullable String summary, @Nullable String icon, @Nullable Double temperatureHigh, @Nullable Double temperatureLow,
+                       @Nullable Double windSpeed, @Nullable Double windBearing) { //, @Nullable String timeCreated, @Nullable String dateCreated) {
         this.time = time;
         this.summary = summary;
         this.icon = icon;
@@ -92,15 +72,6 @@ public class WeatherItem {
         this.windBearing = windBearing;
 //        mTimeOfDayCreated = timeCreated;
 //        mDateCreated = dateCreated;
-    }
-
-    @NonNull
-    public String getmId() {
-        return mId;
-    }
-
-    public void setmId(@NonNull String mId) {
-        this.mId = mId;
     }
 
     @Nullable
@@ -171,13 +142,15 @@ public class WeatherItem {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         WeatherItem item = (WeatherItem) object;
-        return Objects.equal(summary, item.summary) &&
-//                Objects.equal(mId, item.mId) &&
-                Objects.equal(icon, item.icon) &&
-                Objects.equal(temperatureHigh, item.temperatureHigh) &&
-                Objects.equal(temperatureLow, item.temperatureLow) &&
-                Objects.equal(windSpeed, item.windSpeed) &&
-                Objects.equal(windBearing, item.windBearing);
+
+        return Objects.equal(time, item.getTime()) &&
+                Objects.equal(summary, item.getSummary()) &&
+                Objects.equal(time, item.getTime()) &&
+                Objects.equal(icon, item.getIcon()) &&
+                Objects.equal(temperatureHigh, item.getTemperatureHigh()) &&
+                Objects.equal(temperatureLow, item.getTemperatureLow()) &&
+                Objects.equal(windSpeed, item.getWindSpeed()) &&
+                Objects.equal(windBearing, item.getWindBearing());
     }
 
 }

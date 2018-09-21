@@ -28,8 +28,6 @@ public class WeatherItemLocalSource implements WeatherDataSource {
 
     @Override
     public Observable<List<WeatherItem>> getRxWeatherData(boolean isForced) {
-        //TODO: Use Flowable in API and local data classes so that they both return same RX object
-//        return Observable.just(weatherDAO.getWeather());
         return weatherDAO.getWeather().toObservable();
     }
 
@@ -45,7 +43,7 @@ public class WeatherItemLocalSource implements WeatherDataSource {
 
     @Override
     public void clearCachedData() {
-         Completable.fromAction(this::clearDataInDatabase).subscribeOn(Schedulers.single()).subscribe();
+        Completable.fromAction(this::clearDataInDatabase).subscribeOn(Schedulers.single()).subscribe();
     }
 
     private void clearDataInDatabase() {
