@@ -42,7 +42,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
     @BindView(R.id.tv_please_refresh)
     TextView noDataAvailableRefresh;
 
-    private WeatherItemAdapter adapter;
+    private WeatherItemListAdapter adapter;
     private OnListFragmentInteractionListener listItemListener;
     private Unbinder unbinder;
 
@@ -64,7 +64,7 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
         Context context = view.getContext();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new WeatherItemAdapter(new ArrayList<WeatherItem>(0), context, listItemListener);
+        adapter = new WeatherItemListAdapter(new ArrayList<>(), context, listItemListener);
         recyclerView.setAdapter(adapter);
 
         return view;

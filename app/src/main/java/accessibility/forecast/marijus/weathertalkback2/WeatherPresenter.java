@@ -1,16 +1,19 @@
 package accessibility.forecast.marijus.weathertalkback2;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import accessibility.forecast.marijus.weathertalkback2.data.WeatherDataSource;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
 import accessibility.forecast.marijus.weathertalkback2.data.WeatherItemsRepository;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.ActivityScoped;
 import accessibility.forecast.marijus.weathertalkback2.helper.di.modules.WeatherModule;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * This class listens to user actions from the UI ({@link WeatherFragment}), retrieves the data and updates the
@@ -28,9 +31,13 @@ public class WeatherPresenter implements WeatherContract.Presenter {
     @Nullable
     private WeatherContract.View view;
 
+    @NonNull
+    private CompositeDisposable disposable;
+
     @Inject
     public WeatherPresenter(WeatherItemsRepository weatherRepository) {
         this.weatherRepository = weatherRepository;
+        disposable = new CompositeDisposable();
     }
 
     @Override
@@ -39,51 +46,45 @@ public class WeatherPresenter implements WeatherContract.Presenter {
             view.setLoadingIndicator(true);
         }
 
-        weatherRepository.getWeatherData(new WeatherDataSource.GetWeatherDataCallback() {
+        disposable.clear();
 
-            @Override
-            public void onDataLoaded(WeatherItem data) {
-                if (!data.isEmpty()) {
-                    processWeatherData(data);
-                } else {
-                    if (view != null) {
-                        view.showNoDataLayout(true);
-                    }
-                }
-                if (view != null) {
-                    view.setLoadingIndicator(false);
-                }
-            }
-
-            @Override
-            public void onDataNotAvailable(String message) {
-                if (message != null) {
-                    if (view != null) {
-                        view.showErrorMessage(message);
-                    }
-                }
-
-                if (view != null) {
-                    view.showNoDataLayout(true);
-                    view.setLoadingIndicator(false);
-                }
-            }
-        }, isForced);
+        //TODO: Make sure calls aren't duplicated if device is rotated while executing a call
+        disposable.add(weatherRepository.getRxWeatherData(isForced)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(ArrayList::new)
+                .subscribe(
+                        response -> {
+                            if (response.size() == 0) {
+                                showErrorMessage("No data returned");
+                            } else if (view != null) {
+                                processWeatherData(response);
+                                view.setLoadingIndicator(false);
+                            }
+                        },
+                        throwable -> showErrorMessage(throwable.getMessage())) //TODO: Make the Error messages user friendly
+        );
     }
 
-    private void processWeatherData(WeatherItem data) {
-        ArrayList<WeatherItem> weatherData = new ArrayList<>();
-        weatherData.add(data);
+    private void showErrorMessage(String message) {
         if (view != null) {
-            view.displayWeatherData(weatherData);
+            view.showErrorMessage(message);
+            //TODO: Show a SnackBar instead
+            view.showNoDataLayout(true);
+            view.setLoadingIndicator(false);
+        }
+    }
+
+    private void processWeatherData(@NonNull ArrayList<WeatherItem> data) {
+        if (view != null) {
+            view.displayWeatherData(data);
         }
     }
 
     @Override
-    public void updateCachedData(WeatherItem forecast) {
-        weatherRepository.cacheData(forecast);
-    }
+    public void updateCachedData(ArrayList<WeatherItem> weatherData) {
 
+    }
 
     @Override
     public void takeView(WeatherContract.View view) {
@@ -94,6 +95,7 @@ public class WeatherPresenter implements WeatherContract.Presenter {
     @Override
     public void dropView() {
         view = null;
+        disposable.clear();
     }
 
 }

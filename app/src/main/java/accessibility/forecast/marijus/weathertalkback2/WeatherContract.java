@@ -12,7 +12,7 @@ public interface WeatherContract {
 
         void setLoadingIndicator(boolean active);
 
-        void displayWeatherData(ArrayList<WeatherItem> forecast);
+        void displayWeatherData(ArrayList<WeatherItem> weatherData);
 
         void hideWeatherData();
 
@@ -28,7 +28,7 @@ public interface WeatherContract {
 
         void refreshData(boolean isForced);
 
-        void updateCachedData(WeatherItem forecast);
+        void updateCachedData(ArrayList<WeatherItem> weatherData);
 
         void takeView(WeatherContract.View view);
 

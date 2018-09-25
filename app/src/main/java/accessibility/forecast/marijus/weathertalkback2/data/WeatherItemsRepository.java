@@ -1,18 +1,18 @@
 package accessibility.forecast.marijus.weathertalkback2.data;
 
-import android.support.annotation.NonNull;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import accessibility.forecast.marijus.weathertalkback2.helper.utils.DeviceStateUtils;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
- * Concrete implementation to load weather data from the data sources.
- * <p>
- * This implements a dumb synchronisation between locally persisted data and data
+ * Concrete implementation to load weather data from the locally persisted data and data
  * obtained from the server, by using the remote data source on the first load and if the local
  * database doesn't exist is empty or expired.
  * <p>
@@ -22,88 +22,67 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class WeatherItemsRepository implements WeatherDataSource {
 
-    private static WeatherItemsRepository INSTANCE = null;
-
     private final WeatherDataSource remoteDataSource;
     private final WeatherDataSource localDataSource;
+    private ArrayList<WeatherItem> inMemoryCache;
 
     @Inject
     WeatherItemsRepository(@Remote WeatherDataSource remoteDataSource,
-                    @Local WeatherDataSource localDataSource) {
+                           @Local WeatherDataSource localDataSource) {
         this.remoteDataSource = remoteDataSource;
         this.localDataSource = localDataSource;
+        inMemoryCache = new ArrayList<>();
     }
 
     @Override
-    public void getWeatherData(@NonNull GetWeatherDataCallback callback, boolean isForced) {
-        checkNotNull(callback);
-        getDataFromRemoteDataSource(callback, isForced);
+    public Observable<List<WeatherItem>> getRxWeatherData(boolean isForced) {
+        if (isForced) {
+            return getAndCacheRemoteWeatherData();
+        }
+
+        if (inMemoryCache.isEmpty()) {
+            return Observable.concat(getAndCacheLocalWeatherData(), getAndCacheRemoteWeatherData())
+                    .filter(list -> !list.isEmpty())
+                    .firstElement()
+                    .toObservable();
+        } else {
+            return Observable.just(inMemoryCache);
+        }
     }
 
-    @Override
-    public void cacheData(WeatherItem data) {
-        localDataSource.cacheData(data);
+    private Observable<List<WeatherItem>> getAndCacheRemoteWeatherData() {
+        return remoteDataSource.getRxWeatherData(true)
+                .subscribeOn(Schedulers.io())
+                .flatMap(weatherItems -> Flowable.fromIterable(weatherItems)
+                        .doOnNext(this::cacheData).toList().toObservable());
+    }
+
+    private Observable<List<WeatherItem>> getAndCacheLocalWeatherData() {
+        return localDataSource.getRxWeatherData(false)
+                .subscribeOn(Schedulers.io())
+                .flatMap(weatherItems -> Flowable.fromIterable(weatherItems)
+                        .doOnNext(item -> inMemoryCache.add(item)).toList().toObservable());
+    }
+
+    public void cacheData(WeatherItem item) {
+        localDataSource.cacheData(item);
+        inMemoryCache.add(item);
     }
 
     @Override
     public void refreshData() {
-    }
 
-    private void getDataFromRemoteDataSource(@NonNull final GetWeatherDataCallback callback, final boolean isForced) {
-        remoteDataSource.getWeatherData(new GetWeatherDataCallback() {
-
-            @Override
-            public void onDataLoaded(WeatherItem data) {
-                if (!data.isEmpty()) {
-                    cacheData(data);
-                    callback.onDataLoaded(data);
-                } else {
-                    callback.onDataNotAvailable(null);
-                }
-            }
-
-            @Override
-            public void onDataNotAvailable(String message) {
-                // If client is offline - we are getting data from cache (local repo)
-                if (!isForced) {
-                    getDataFromLocalDataSource(callback);
-                } else {
-                    callback.onDataNotAvailable("Could not connect to internet.");
-                }
-
-            }
-        }, isForced);
-    }
-
-
-    private void getDataFromLocalDataSource(@NonNull final GetWeatherDataCallback callback) {
-        localDataSource.getWeatherData(new GetWeatherDataCallback() {
-
-            @Override
-            public void onDataLoaded(WeatherItem data) {
-                if (isCacheValid(data.getmDateCreated())) {
-                    callback.onDataLoaded(data);
-                } else {
-                    callback.onDataNotAvailable(null);
-                }
-            }
-
-            private boolean isCacheValid(String dateCreated) {
-                return !DeviceStateUtils.isOlderThanOneDay(dateCreated);
-            }
-
-            @Override
-            public void onDataNotAvailable(String message) {
-                callback.onDataNotAvailable(null);
-            }
-        }, false);
     }
 
     @Override
     public void clearCachedData() {
-        //TODO: Implement in-memory cache
-        //        remoteDataSource.clear();
-        //        localDataSource.clear();
+        inMemoryCache.clear();
+        localDataSource.clearCachedData();
+    }
+
+    //TODO: Implement this not to load weather data from DB if it's older than 1 day
+    private boolean isCacheValid(String dateCreated) {
+        return !DeviceStateUtils.isOlderThanOneDay(dateCreated);
     }
 
 }

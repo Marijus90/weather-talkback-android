@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class Forecast {
 
-    @SerializedName("currently")
-    private Currently currently;
+    @SerializedName("daily")
+    private Daily daily;
 
-    public Currently getCurrently() {
-        return currently;
+    public Daily getDaily() {
+        return daily;
     }
 
 }

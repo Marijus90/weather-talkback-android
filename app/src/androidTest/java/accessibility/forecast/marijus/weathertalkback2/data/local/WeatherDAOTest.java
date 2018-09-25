@@ -9,12 +9,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import accessibility.forecast.marijus.weathertalkback2.data.WeatherItem;
+import io.reactivex.observers.TestObserver;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Integration test for the {@link WeatherDAO}.
@@ -22,10 +25,9 @@ import static org.junit.Assert.assertNull;
 @RunWith(AndroidJUnit4.class)
 public class WeatherDAOTest {
 
+    private final WeatherItem testWeatherItem = new WeatherItem(123L, "Sunny",
+            "icon", 21.0, 20.0, 180.0, 20.0);
     private WeatherDatabase database;
-    private final WeatherItem testWeatherItem
-            = new WeatherItem("Sunny", "icon", 21.0,
-            20.0, 180.0, "00:00:00", "12/01/01/ 11:11:11");
 
     @Before
     public void initDB() {
@@ -39,26 +41,33 @@ public class WeatherDAOTest {
     }
 
     @Test
-    public void getWeatherItem() {
+    public void testPreConditions() {
+        assertNotNull(database);
+    }
+
+    @Test
+    public void getWeatherItems() {
         database.weatherDAO().insertWeatherItem(testWeatherItem);
 
-        WeatherItem retrievedItem = database.weatherDAO().getWeather();
+        TestObserver<List<WeatherItem>> testObserver = new TestObserver<>();
+        database.weatherDAO().getWeather().subscribe(testObserver);
 
-        assertWeatherItem(retrievedItem, "Sunny", "icon", 21.0,
-                20.0, 180.0, "00:00:00", "12/01/01/ 11:11:11");
+        List<WeatherItem> result = testObserver.values().get(0);
+        assertThat(result, hasItem(testWeatherItem));
     }
 
     @Test
     public void insertedItemReplacesOnConflict() {
         database.weatherDAO().insertWeatherItem(testWeatherItem);
+        database.weatherDAO().insertWeatherItem(testWeatherItem);
 
-        WeatherItem duplicateItem = testWeatherItem;
-        database.weatherDAO().insertWeatherItem(duplicateItem);
+        TestObserver<List<WeatherItem>> testObserver = new TestObserver<>();
+        database.weatherDAO().getWeather().subscribe(testObserver);
 
-        WeatherItem retrievedItem = database.weatherDAO().getWeather();
+        List<WeatherItem> result = testObserver.values().get(0);
 
-        assertWeatherItem(retrievedItem, "Sunny", "icon", 21.0,
-                20.0, 180.0, "00:00:00", "12/01/01/ 11:11:11");
+        assertThat(result, hasItem(testWeatherItem));
+        assertTrue(result.size() == 1);
     }
 
     @Test
@@ -67,22 +76,12 @@ public class WeatherDAOTest {
 
         database.weatherDAO().deleteWeatherItems();
 
-        WeatherItem retrievedItem = database.weatherDAO().getWeather();
+        TestObserver<List<WeatherItem>> testObserver = new TestObserver<>();
+        database.weatherDAO().getWeather().subscribe(testObserver);
 
-        assertNull(retrievedItem);
-    }
+        List<WeatherItem> result = testObserver.values().get(0);
 
-    private void assertWeatherItem(WeatherItem item, String summary, String icon, double temperature,
-                                   double windSpeed, double windDirection, String timeCreated, String dateCreated) {
-        assertThat(item, notNullValue());
-        assertThat(item.getmSummary(), is(summary));
-        assertThat(item.getmIcon(), is(icon));
-        assertThat(item.getmTemperature(), is(temperature));
-        assertThat(item.getmWindSpeed(), is(windSpeed));
-        assertThat(item.getmWindBearing(), is(windDirection));
-        assertThat(item.getmTimeOfDayCreated(), is(timeCreated));
-        assertThat(item.getmDateCreated(), is(dateCreated));
+        assertTrue(result.isEmpty());
     }
 
 }
-
