@@ -18,7 +18,7 @@ public interface WeatherContract {
 
         void showNoDataLayout(boolean active);
 
-        void showErrorMessage(String message);
+        void showErrorMessage();
 
         boolean isActive();
 

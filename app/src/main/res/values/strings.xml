@@ -12,4 +12,7 @@
     <string name="wind_speed">Wind speed:</string>
     <string name="wind_direction">Wind direction:</string>
     <string name="image_condition_desc">Image of a weather condition that day</string>
+
+    <!-- Error/warning messages -->
+    <string name="error_msg_no_data">Could not fetch the data. Please refresh later</string>
 </resources>

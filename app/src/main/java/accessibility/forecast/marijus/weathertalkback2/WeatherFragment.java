@@ -2,6 +2,7 @@ package accessibility.forecast.marijus.weathertalkback2;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -22,10 +24,12 @@ import butterknife.Unbinder;
 import dagger.android.support.DaggerFragment;
 
 /**
- * A fragment representing a list of weather items.
+ * Fragment representing a list of weather items.
  */
 @ActivityScoped
 public class WeatherFragment extends DaggerFragment implements WeatherContract.View {
+
+    private final int ERROR_MESSAGE_DURATION = (int) TimeUnit.SECONDS.toMillis(4);
 
     @Inject
     WeatherContract.Presenter presenter;
@@ -38,9 +42,6 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
 
     @BindView(R.id.tv_no_data_available)
     TextView noDataAvailable;
-
-    @BindView(R.id.tv_please_refresh)
-    TextView noDataAvailableRefresh;
 
     private WeatherItemListAdapter adapter;
     private OnListFragmentInteractionListener listItemListener;
@@ -116,14 +117,18 @@ public class WeatherFragment extends DaggerFragment implements WeatherContract.V
 
     @Override
     public void showNoDataLayout(boolean active) {
-        int visibility = active ? View.VISIBLE : View.GONE;
-        noDataAvailable.setVisibility(visibility);
-        noDataAvailableRefresh.setVisibility(visibility);
+        noDataAvailable.setVisibility(active ? View.VISIBLE : View.GONE);
     }
 
     @Override
-    public void showErrorMessage(String message) {
-        noDataAvailable.setText(message);
+    public void showErrorMessage() {
+        String message = getString(R.string.error_msg_no_data);
+        if(adapter != null && adapter.getItemCount() == 0) {
+            showNoDataLayout(true);
+            noDataAvailable.setText(message);
+        } else {
+            Snackbar.make(recyclerView, message, ERROR_MESSAGE_DURATION).show();
+        }
     }
 
     @Override

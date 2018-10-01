@@ -56,21 +56,19 @@ public class WeatherPresenter implements WeatherContract.Presenter {
                 .subscribe(
                         response -> {
                             if (response.size() == 0) {
-                                showErrorMessage("No data returned");
+                                showErrorMessage();
                             } else if (view != null) {
                                 processWeatherData(response);
                                 view.setLoadingIndicator(false);
                             }
                         },
-                        throwable -> showErrorMessage(throwable.getMessage())) //TODO: Make the Error messages user friendly
+                        throwable -> showErrorMessage())
         );
     }
 
-    private void showErrorMessage(String message) {
+    private void showErrorMessage() {
         if (view != null) {
-            view.showErrorMessage(message);
-            //TODO: Show a SnackBar instead
-            view.showNoDataLayout(true);
+            view.showErrorMessage();
             view.setLoadingIndicator(false);
         }
     }
