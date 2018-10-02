@@ -6,8 +6,8 @@ android {
         applicationId "accessibility.forecast.marijus.weathertalkback2"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 2
-        versionName "v0.1.2"
+        versionCode 3
+        versionName "0.1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -59,7 +59,11 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.12'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
 
-    //Testing
+    // Memory Leak checking
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+
+    // Testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.21.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
